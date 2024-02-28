@@ -16,7 +16,7 @@ export class BlogsService {
   ): Promise<BlogDocumentType | false> {
     const blogEntity: Blog = {
       ...blog,
-      isMembership: true,
+      isMembership: false,
       createdAt: new Date(),
     };
     return await this.blogsRepository.createBlog(blogEntity);
