@@ -1,13 +1,5 @@
-import {
-  Body,
-  Controller,
-  Delete,
-  Get,
-  Param,
-  Post,
-  Res,
-} from '@nestjs/common';
-import { BlogsService } from './blogs.service';
+import { Body, Controller, Get, Param, Post } from '@nestjs/common';
+import { BlogsService } from './application/blogs.service';
 import {
   BlogInputCreateModel,
   BlogViewModel,
@@ -15,18 +7,18 @@ import {
 } from './types/blogs.types';
 import { BlogsMongoDataMapper } from './domain/blogs.mongo.dm';
 import { BlogDocumentType } from './domain/blogs-schema';
+import { PostInputCreateModel, PostViewModel } from '../posts/types/post.types';
+import { PostDocumentType } from '../posts/domain/posts-schema';
+import { PostsService } from '../posts/application/posts.service';
 
-@Controller()
+@Controller('/blogs')
 export class BlogsController {
-  constructor(protected blogsService: BlogsService) {}
+  constructor(
+    protected blogsService: BlogsService,
+    protected postsService: PostsService,
+  ) {}
 
-  @Delete('/testing/all-data')
-  async deleteAllData(@Res() res) {
-    const a = await this.blogsService.deleteAllData();
-    res.status(204).send();
-  }
-
-  @Get('/blogs')
+  @Get()
   async getBlogs() {
     const blogs = await this.blogsService.getBlogs();
     const changeBlogs = blogs.map((b: BlogDocumentType) =>
@@ -35,7 +27,7 @@ export class BlogsController {
     return changeBlogs;
   }
 
-  @Get('/blogs/:id')
+  @Get('/:id')
   async getBlogById(@Param() id: string): Promise<BlogViewModel | false> {
     const blog: BlogDocumentType | null =
       await this.blogsService.getBlogById(id);
@@ -46,13 +38,38 @@ export class BlogsController {
     return false;
   }
 
-  @Post('/blogs')
+  @Post()
   async createBlog(
     @Body() body: BlogInputCreateModel,
   ): Promise<WithId<BlogViewModel> | false> {
     const blog: BlogDocumentType | false =
       await this.blogsService.createBlog(body);
     return blog ? BlogsMongoDataMapper.toView(blog) : false;
+  }
+
+  @Post('/:id/posts')
+  async createPost(
+    @Body() body: PostInputCreateModel,
+    // ): Promise<WithId<BlogViewModel> | false> {
+  ) {
+    const blog = await this.blogsService.getBlogById(body.blogId);
+    if (blog) {
+      const post: PostViewModel | false = await this.postsService.createPost(
+        body,
+        blog.name,
+      );
+      return post;
+    }
+    return false;
+    // return blog ? BlogsMongoDataMapper.toView(blog) : false;
+  }
+
+  @Get('/:id/posts')
+  async getPostsByBlogId(@Param('id') id: string) {
+    debugger;
+    const posts: PostViewModel[] | false =
+      await this.postsService.getPostsByBlogId(id);
+    return posts;
   }
 
   //

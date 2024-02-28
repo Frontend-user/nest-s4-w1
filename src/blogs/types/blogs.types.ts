@@ -1,5 +1,3 @@
-import { Types } from 'mongoose';
-
 export type BlogInputCreateModel = {
   name: string;
   description: string;

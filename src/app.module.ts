@@ -6,17 +6,31 @@ import { ConfigModule } from '@nestjs/config';
 import * as process from 'process';
 import { Blog, BlogSchema } from './blogs/domain/blogs-schema';
 import { BlogsController } from './blogs/blogs.controller';
-import { BlogsService } from './blogs/blogs.service';
-import { BlogsRepository } from './blogs/blogs.repository';
+import { BlogsService } from './blogs/application/blogs.service';
+import { BlogsRepository } from './blogs/repositories/blogs.repository';
+import { PostsRepository } from './posts/repositories/posts.repository';
+import { PostsService } from './posts/application/posts.service';
+import { PostSchema, Post } from './posts/domain/posts-schema';
+import { PostsController } from './posts/posts.controller';
+import { BlogsQueryRepository } from './blogs/repositories/blogs.query-repository';
+import { PostsQueryRepository } from './posts/repositories/posts.query-repository';
 
 @Module({
   imports: [
     ConfigModule.forRoot(),
-    // BlogsModule,
+    MongooseModule.forFeature([{ name: Post.name, schema: PostSchema }]),
     MongooseModule.forFeature([{ name: Blog.name, schema: BlogSchema }]),
     MongooseModule.forRoot(process.env.MONGO_NEST_URL as string),
   ],
-  controllers: [AppController, BlogsController],
-  providers: [AppService, BlogsService, BlogsRepository],
+  controllers: [AppController, BlogsController, PostsController],
+  providers: [
+    AppService,
+    BlogsService,
+    BlogsRepository,
+    BlogsQueryRepository,
+    PostsRepository,
+    PostsService,
+    PostsQueryRepository,
+  ],
 })
 export class AppModule {}

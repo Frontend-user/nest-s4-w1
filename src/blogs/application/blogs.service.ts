@@ -1,11 +1,15 @@
-import { BlogsRepository } from './blogs.repository';
+import { BlogsRepository } from '../repositories/blogs.repository';
 import { Injectable } from '@nestjs/common';
-import { BlogInputCreateModel } from './types/blogs.types';
-import { Blog, BlogDocumentType } from './domain/blogs-schema';
+import { BlogInputCreateModel } from '../types/blogs.types';
+import { Blog, BlogDocumentType } from '../domain/blogs-schema';
+import { BlogsQueryRepository } from '../repositories/blogs.query-repository';
 
 @Injectable()
 export class BlogsService {
-  constructor(protected blogsRepository: BlogsRepository) {}
+  constructor(
+    protected blogsRepository: BlogsRepository,
+    protected blogsQueryRepository: BlogsQueryRepository,
+  ) {}
 
   async deleteAllData() {
     return await this.blogsRepository.deleteAllData();
@@ -23,10 +27,10 @@ export class BlogsService {
   }
 
   async getBlogById(id: string): Promise<BlogDocumentType | null> {
-    return await this.blogsRepository.getBlogById(id);
+    return await this.blogsQueryRepository.getBlogById(id);
   }
 
   async getBlogs() {
-    return await this.blogsRepository.getBlogs();
+    return await this.blogsQueryRepository.getBlogs();
   }
 }

@@ -48,10 +48,10 @@ $ yarn run start:prod
 ## Test
 
 ```bash
-# unit tests
+# unit __tests__
 $ yarn run test
 
-# e2e tests
+# e2e __tests__
 $ yarn run test:e2e
 
 # test coverage

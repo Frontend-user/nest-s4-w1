@@ -1,0 +1,52 @@
+import { Injectable } from '@nestjs/common';
+import { PostInputCreateModel, PostViewModel } from '../types/post.types';
+import { Post, PostDocumentType } from '../domain/posts-schema';
+import { PostsRepository } from '../repositories/posts.repository';
+import { PostsQueryRepository } from '../repositories/posts.query-repository';
+import { PostsMongoDataMapper } from '../domain/posts.mongo.dm';
+
+@Injectable()
+export class PostsService {
+  constructor(
+    protected postsRepository: PostsRepository,
+    protected postsQueryRepository: PostsQueryRepository,
+  ) {}
+
+  async createPost(
+    post: PostInputCreateModel,
+    blogName: string,
+  ): Promise<PostViewModel | false> {
+    const PostEntity: Post = {
+      ...post,
+      blogName: blogName,
+      extendedLikesInfo: {
+        likesCount: 0,
+        dislikesCount: 0,
+        myStatus: 'None',
+        newestLikes: [],
+      },
+      createdAt: new Date(),
+    };
+
+    const createdPost = await this.postsRepository.createPost(PostEntity);
+    return createdPost ? PostsMongoDataMapper.toView(createdPost) : false;
+  }
+
+  async getPostById(id: string): Promise<PostDocumentType | null> {
+    return await this.postsQueryRepository.getPostById(id);
+  }
+
+  async getPostsByBlogId(id: string) {
+    const posts: PostDocumentType[] | null =
+      await this.postsQueryRepository.getPostsByBlogId(id);
+    return posts ? posts.map((p) => PostsMongoDataMapper.toView(p)) : false;
+  }
+
+  async getPosts() {
+    return await this.postsQueryRepository.getPosts();
+  }
+
+  async deleteAllData() {
+    return await this.postsRepository.deleteAllData();
+  }
+}
