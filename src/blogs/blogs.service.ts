@@ -22,6 +22,10 @@ export class BlogsService {
     return await this.blogsRepository.createBlog(blogEntity);
   }
 
+  async getBlogById(id: string): Promise<BlogDocumentType | null> {
+    return await this.blogsRepository.getBlogById(id);
+  }
+
   async getBlogs() {
     return await this.blogsRepository.getBlogs();
   }

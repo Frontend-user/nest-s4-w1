@@ -33,34 +33,49 @@ describe('Blogs', () => {
     app = moduleRef.createNestApplication();
     await app.init();
   });
-  // it(`/POST CREATE BLOG`, async () => {
-  //   const createdBlog: any = await request(app.getHttpServer())
-  //     .post('/blogs')
-  //     .send(correctBlogData);
-  //   expect(JSON.parse(createdBlog.text)).toEqual({
-  //     id: expect.any(String),
-  //     name: correctBlogData.name,
-  //     description: correctBlogData.description,
-  //     websiteUrl: correctBlogData.websiteUrl,
-  //     isMembership: false,
-  //     createdAt: expect.any(String),
-  //     // _id: expect.any(String),
-  //     // __v: expect.any(String),
-  //   });
-  // });
+  let createdBlog: any;
+  it(`/POST CREATE BLOG`, async () => {
+    createdBlog = await request(app.getHttpServer())
+      .post('/blogs')
+      .send(correctBlogData);
+    expect(JSON.parse(createdBlog.text)).toEqual({
+      id: expect.any(String),
+      name: correctBlogData.name,
+      description: correctBlogData.description,
+      websiteUrl: correctBlogData.websiteUrl,
+      isMembership: false,
+      createdAt: expect.any(String),
+      // _id: expect.any(String),
+      // __v: expect.any(String),
+    });
+  });
   //
+  // let createdBlo2g;
   // it(`/GET catsnmmmmm`, async () => {
-  //   const createdBlo2g = await request(app.getHttpServer()).get('/blogs');
+  //   createdBlo2g = await request(app.getHttpServer()).get('/blogs');
   //   expect(JSON.parse(createdBlo2g.text)).toBe(['s']);
-  //   // /.expect({
-  //   // name: 'name',
-  //   // description: 'description',
-  //   // websiteUrl: 'https://TXOxcSX82DRX8sXEHAWm.ZFTe4',
-  //   // isMembership: true,
-  //   // });
+  //   /.expect({
+  //   name: 'name',
+  //   description: 'description',
+  //   websiteUrl: 'https://TXOxcSX82DRX8sXEHAWm.ZFTe4',
+  // isMembership: true,
   // });
+
+  it(`/GET catsnmmmmm`, async () => {
+    const getOneBlog = await request(app.getHttpServer()).get(
+      `/blogs/${JSON.parse(createdBlog.text)['id']}`,
+    );
+    expect(JSON.parse(getOneBlog.text)).toEqual({
+      id: expect.any(String),
+      name: correctBlogData.name,
+      description: correctBlogData.description,
+      websiteUrl: correctBlogData.websiteUrl,
+      isMembership: false,
+      createdAt: expect.any(String),
+    });
+  });
   it(`/DELETE`, async () => {
-    const createdBlo2g = await request(app.getHttpServer())
+    const createdBlgo2g = await request(app.getHttpServer())
       .delete('/testing/all-data')
       .expect(204);
 

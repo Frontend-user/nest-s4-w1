@@ -1,4 +1,12 @@
-import { Body, Controller, Delete, Get, Post, Res } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Res,
+} from '@nestjs/common';
 import { BlogsService } from './blogs.service';
 import {
   BlogInputCreateModel,
@@ -25,6 +33,17 @@ export class BlogsController {
       BlogsMongoDataMapper.toView(b),
     );
     return changeBlogs;
+  }
+
+  @Get('/blogs/:id')
+  async getBlogById(@Param() id: string): Promise<BlogViewModel | false> {
+    const blog: BlogDocumentType | null =
+      await this.blogsService.getBlogById(id);
+    if (blog) {
+      const changeBlog: BlogViewModel = BlogsMongoDataMapper.toView(blog);
+      return changeBlog;
+    }
+    return false;
   }
 
   @Post('/blogs')
