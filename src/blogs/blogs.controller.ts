@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Post, Res } from '@nestjs/common';
 import { BlogsService } from './blogs.service';
 import {
   BlogInputCreateModel,
@@ -8,11 +8,17 @@ import {
 import { BlogsMongoDataMapper } from './domain/blogs.mongo.dm';
 import { BlogDocumentType } from './domain/blogs-schema';
 
-@Controller('blogs')
+@Controller()
 export class BlogsController {
   constructor(protected blogsService: BlogsService) {}
 
-  @Get()
+  @Delete('/testing/all-data')
+  async deleteAllData(@Res() res) {
+    const a = await this.blogsService.deleteAllData();
+    res.status(204).send();
+  }
+
+  @Get('/blogs')
   async getBlogs() {
     const blogs = await this.blogsService.getBlogs();
     const changeBlogs = blogs.map((b: BlogDocumentType) =>
@@ -21,7 +27,7 @@ export class BlogsController {
     return changeBlogs;
   }
 
-  @Post()
+  @Post('/blogs')
   async createBlog(
     @Body() body: BlogInputCreateModel,
   ): Promise<WithId<BlogViewModel> | false> {

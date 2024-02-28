@@ -7,6 +7,11 @@ import { Injectable } from '@nestjs/common';
 export class BlogsRepository {
   constructor(@InjectModel(Blog.name) private blogModel: Model<Blog>) {}
 
+  async deleteAllData() {
+    const reponse: any = await this.blogModel.deleteMany({});
+    return true;
+  }
+
   async createBlog(blogEntity?: Blog): Promise<BlogDocumentType | false> {
     const createdBlog = await new this.blogModel(blogEntity);
     const getCreatedBlog = await createdBlog.save();

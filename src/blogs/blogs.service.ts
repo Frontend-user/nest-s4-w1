@@ -7,6 +7,10 @@ import { Blog, BlogDocumentType } from './domain/blogs-schema';
 export class BlogsService {
   constructor(protected blogsRepository: BlogsRepository) {}
 
+  async deleteAllData() {
+    return await this.blogsRepository.deleteAllData();
+  }
+
   async createBlog(
     blog: BlogInputCreateModel,
   ): Promise<BlogDocumentType | false> {
