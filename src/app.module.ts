@@ -4,15 +4,19 @@ import { AppService } from './app.service';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ConfigModule } from '@nestjs/config';
 import * as process from 'process';
-import { BlogsModule } from './blogs/blogs.module';
+import { Blog, BlogSchema } from './blogs/domain/blogs-schema';
+import { BlogsController } from './blogs/blogs.controller';
+import { BlogsService } from './blogs/blogs.service';
+import { BlogsRepository } from './blogs/blogs.repository';
 
 @Module({
   imports: [
-    BlogsModule,
     ConfigModule.forRoot(),
+    // BlogsModule,
+    MongooseModule.forFeature([{ name: Blog.name, schema: BlogSchema }]),
     MongooseModule.forRoot(process.env.MONGO_NEST_URL as string),
   ],
-  controllers: [AppController],
-  providers: [AppService],
+  controllers: [AppController, BlogsController],
+  providers: [AppService, BlogsService, BlogsRepository],
 })
 export class AppModule {}

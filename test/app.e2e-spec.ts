@@ -1,24 +1,32 @@
-import { Test, TestingModule } from '@nestjs/testing';
+import request from 'supertest';
+import { Test } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
-import * as request from 'supertest';
-import { AppModule } from './../src/app.module';
+import { BlogsService } from '../src/blogs/blogs.service';
+import { AppModule } from '../src/app.module';
 
-describe('AppController (e2e)', () => {
+describe('Cats', () => {
   let app: INestApplication;
+  const blogsService = { getBlogs: () => request('/blogs') };
 
-  beforeEach(async () => {
-    const moduleFixture: TestingModule = await Test.createTestingModule({
+  beforeAll(async () => {
+    const moduleRef = await Test.createTestingModule({
       imports: [AppModule],
-    }).compile();
+    })
+      .overrideProvider(BlogsService)
+      .useValue(blogsService)
+      .compile();
 
-    app = moduleFixture.createNestApplication();
+    app = moduleRef.createNestApplication();
     await app.init();
   });
 
-  it('/ (GET)', () => {
-    return request(app.getHttpServer())
-      .get('/')
-      .expect(200)
-      .expect('Hello World!');
+  it(`/GET catsrt`, () => {
+    return request(app.getHttpServer()).get('/blogs').expect(200).expect({
+      data: blogsService.getBlogs(),
+    });
+  });
+
+  afterAll(async () => {
+    await app.close();
   });
 });
