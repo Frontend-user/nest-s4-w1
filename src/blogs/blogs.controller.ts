@@ -1,10 +1,6 @@
 import { Body, Controller, Get, Param, Post, Res } from '@nestjs/common';
 import { BlogsService } from './application/blogs.service';
-import {
-  BlogInputCreateModel,
-  BlogViewModel,
-  WithId,
-} from './types/blogs.types';
+import { BlogInputCreateModel, BlogViewModel, WithId } from './types/blogs.types';
 import { BlogsMongoDataMapper } from './domain/blogs.mongo.dm';
 import { BlogDocumentType } from './domain/blogs-schema';
 import { PostInputCreateModel, PostViewModel } from '../posts/types/post.types';
@@ -23,16 +19,13 @@ export class BlogsController {
   @Get()
   async getBlogs() {
     const blogs = await this.blogsService.getBlogs();
-    const changeBlogs = blogs.map((b: BlogDocumentType) =>
-      BlogsMongoDataMapper.toView(b),
-    );
+    const changeBlogs = blogs.map((b: BlogDocumentType) => BlogsMongoDataMapper.toView(b));
     return changeBlogs;
   }
 
   @Get('/:id')
   async getBlogById(@Param() id: string): Promise<BlogViewModel | false> {
-    const blog: BlogDocumentType | null =
-      await this.blogsQueryRepository.getBlogById(id);
+    const blog: BlogDocumentType | null = await this.blogsQueryRepository.getBlogById(id);
     if (blog) {
       const changeBlog: BlogViewModel = BlogsMongoDataMapper.toView(blog);
       return changeBlog;
@@ -41,11 +34,8 @@ export class BlogsController {
   }
 
   @Post()
-  async createBlog(
-    @Body() body: BlogInputCreateModel,
-  ): Promise<WithId<BlogViewModel> | false> {
-    const blog: BlogDocumentType | false =
-      await this.blogsService.createBlog(body);
+  async createBlog(@Body() body: BlogInputCreateModel): Promise<WithId<BlogViewModel> | false> {
+    const blog: BlogDocumentType | false = await this.blogsService.createBlog(body);
     return blog ? BlogsMongoDataMapper.toView(blog) : false;
   }
 
@@ -58,8 +48,10 @@ export class BlogsController {
     const blog = await this.blogsService.getBlogById(id);
     if (blog) {
       body.blogId = String(blog._id);
-      const post: WithId<PostViewModel> | false =
-        await this.postsService.createPost(body, blog.name);
+      const post: WithId<PostViewModel> | false = await this.postsService.createPost(
+        body,
+        blog.name,
+      );
       return post ? res.send(post) : res.sendStatus(404);
     }
     res.sendStatus(404);
@@ -67,9 +59,9 @@ export class BlogsController {
 
   @Get('/:id/posts')
   async getPostByBlogId(@Param('id') id: string, @Res() res) {
-    const posts: PostViewModel[] | false =
-      await this.postsService.getPostsByBlogId(id);
-    return posts ? posts : res.sendStatus(404);
+    debugger;
+    const posts: PostViewModel[] | false = await this.postsService.getPostsByBlogId(id);
+    return posts ? res.send(posts) : res.sendStatus(404);
   }
 
   //

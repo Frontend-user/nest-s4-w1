@@ -53,13 +53,13 @@ describe('Blogs', () => {
     post_1 = await testManager.craetePostByBlogId(blog_1.id);
     console.log(post_1, 'post create by blogid');
   });
-  // it(`Get POSTs BY BLOG ID`, async () => {
-  //   await testManager.getPostsByBlogId();
-  // });
-  // it(`GET POST`, async () => {
-  //   const getPost: any = await testManager.getPost(post_1.id);
-  //   console.log(getPost, 'getPOST');
-  // });
+  it(`Get POSTs BY BLOG ID`, async () => {
+    await testManager.getPostsByBlogId(blog_1!.id);
+  });
+  it(`GET POST`, async () => {
+    const getPost: any = await testManager.getPost(post_1.id);
+    console.log(getPost, 'getPOST');
+  });
 
   // it(`GET POSTs`, async () => {
   //   await testManager.getPosts();

@@ -38,9 +38,9 @@ export class TestManager {
     return JSON.parse(getOneBlog.text);
   }
 
-  async getPostsByBlogId() {
+  async getPostsByBlogId(blogId:string) {
     const response = await request(this.app.getHttpServer()).get(
-      `/blogs/${this.blog_1_id}/posts`,
+      `/blogs/${blogId}/posts`,
     );
     expect(JSON.parse(response.text)).toEqual('fsdfdssdf');
   }
