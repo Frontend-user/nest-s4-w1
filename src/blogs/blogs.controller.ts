@@ -57,7 +57,7 @@ export class BlogsController {
   @Get('/:id')
   async getBlogById(@Res() res, @Param('id') id: string): Promise<BlogViewModel | any> {
     const response: BlogDocumentType | null = await this.blogsQueryRepository.getBlogById(id);
-    res.sendStatus(response ? BlogsMongoDataMapper.toView(response) : HTTP_STATUSES.NOT_FOUND_404);
+    res.sendStatus(response?.id ? BlogsMongoDataMapper.toView(response) : HTTP_STATUSES.NOT_FOUND_404);
   }
 
   @Get('/:id/posts')
@@ -109,9 +109,9 @@ export class BlogsController {
   }
 
   @Post()
-  async createBlog(@Body() body: BlogInputCreateModel): Promise<WithId<BlogViewModel> | false> {
+  async createBlog(@Res() res, @Body() body: BlogInputCreateModel): Promise<WithId<BlogViewModel>> {
     const blog: BlogDocumentType | false = await this.blogsService.createBlog(body);
-    return blog ? BlogsMongoDataMapper.toView(blog) : false;
+    return blog ? res.send(BlogsMongoDataMapper.toView(blog)) : res.sendStatus(404);
   }
 
   @Post('/:id/posts')
