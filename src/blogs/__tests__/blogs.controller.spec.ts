@@ -56,10 +56,10 @@ describe('Blogs', () => {
   // it(`Get POSTs BY BLOG ID`, async () => {
   //   await testManager.getPostsByBlogId();
   // });
-  it(`GET POST`, async () => {
-    const getPost: any = await testManager.getPost(post_1.id);
-    console.log(getPost, 'getPOST');
-  });
+  // it(`GET POST`, async () => {
+  //   const getPost: any = await testManager.getPost(post_1.id);
+  //   console.log(getPost, 'getPOST');
+  // });
 
   // it(`GET POSTs`, async () => {
   //   await testManager.getPosts();

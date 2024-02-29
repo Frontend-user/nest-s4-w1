@@ -50,9 +50,9 @@ export class BlogsController {
   }
 
   @Post('/:id/posts')
-  async createPost(
+  async createPostByBlogId(
     @Body() body: PostInputCreateModel,
-    @Param() id: string,
+    @Param('id') id: string,
     @Res() res,
   ): Promise<WithId<PostViewModel> | undefined> {
     const blog = await this.blogsService.getBlogById(id);
@@ -60,14 +60,13 @@ export class BlogsController {
       body.blogId = String(blog._id);
       const post: WithId<PostViewModel> | false =
         await this.postsService.createPost(body, blog.name);
-      return post ? post : res.sendStatus(404);
+      return post ? res.send(post) : res.sendStatus(404);
     }
     res.sendStatus(404);
   }
 
   @Get('/:id/posts')
-  async getPostsByBlogId(@Param('id') id: string, @Res() res) {
-    debugger;
+  async getPostByBlogId(@Param('id') id: string, @Res() res) {
     const posts: PostViewModel[] | false =
       await this.postsService.getPostsByBlogId(id);
     return posts ? posts : res.sendStatus(404);
