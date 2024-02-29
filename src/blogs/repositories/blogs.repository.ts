@@ -26,4 +26,9 @@ export class BlogsRepository {
     const updateBlog = await this.blogModel.updateOne({ _id: new Types.ObjectId(id) }, blogEntity);
     return updateBlog.matchedCount === 1;
   }
+
+  async deleteBlog(id: string): Promise<boolean> {
+    const response = await this.blogModel.deleteOne({_id:new Types.ObjectId(id)})
+    return !!response.deletedCount;
+  }
 }

@@ -55,13 +55,9 @@ export class BlogsController {
   }
 
   @Get('/:id')
-  async getBlogById(@Param('id') id: string): Promise<BlogViewModel | false> {
-    const blog: BlogDocumentType | null = await this.blogsQueryRepository.getBlogById(id);
-    if (blog) {
-      const changeBlog: BlogViewModel = BlogsMongoDataMapper.toView(blog);
-      return changeBlog;
-    }
-    return false;
+  async getBlogById(@Res() res, @Param('id') id: string): Promise<BlogViewModel | false> {
+    const response: BlogDocumentType | null = await this.blogsQueryRepository.getBlogById(id);
+    res.sendStatus(response ? BlogsMongoDataMapper.toView(response) : HTTP_STATUSES.NOT_FOUND_404);
   }
 
   @Get('/:id/posts')
@@ -143,12 +139,18 @@ export class BlogsController {
   // }
 
   @Put('/:id')
-  async updateBlog(
-    @Res() res,
-    @Body() body:BlogInputCreateModel,
-    @Param('id') id: string,
-  ) {
+  async updateBlog(@Res() res, @Body() body: BlogInputCreateModel, @Param('id') id: string) {
     const response: boolean = await this.blogsService.updateBlog(id, body);
     res.sendStatus(response ? HTTP_STATUSES.NO_CONTENT_204 : HTTP_STATUSES.NOT_FOUND_404);
+  }
+
+  @Put('/:id')
+  async deleteBlog(@Res() res, @Param('id') id: string) {
+    try {
+      const response: boolean = await this.blogsService.deleteBlog(id);
+      res.sendStatus(response ? HTTP_STATUSES.NO_CONTENT_204 : HTTP_STATUSES.NOT_FOUND_404);
+    } catch (error) {
+      res.sendStatus(HTTP_STATUSES.NOT_FOUND_404);
+    }
   }
 }

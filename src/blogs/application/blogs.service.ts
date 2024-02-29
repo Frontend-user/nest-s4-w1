@@ -36,5 +36,8 @@ export class BlogsService {
   async getBlogById(id: string): Promise<BlogDocumentType | null> {
     return await this.blogsQueryRepository.getBlogById(id);
   }
+  async deleteBlog(id: string): Promise<boolean> {
+    return await this.blogsRepository.deleteBlog(id)
+  }
 
 }
