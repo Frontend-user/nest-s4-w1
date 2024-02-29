@@ -41,45 +41,50 @@ describe('Blogs', () => {
   });
   it(`CREATE BLOG`, async () => {
     blog_1 = await testManager.createBlog();
-    console.log(blog_1, 'createBlog');
+    expect(blog_1).toEqual('s');
   });
 
-  it(`CREATE BLOG`, async () => {
-    blog_1 = await testManager.createBlog('aaaa');
-    console.log(blog_1, 'createBlog');
+  it(`CREATE POST BY BLOG ID`, async () => {
+    post_1 = await testManager.craetePostByBlogId(blog_1.id);
+    console.log(post_1, 'post create by blogid');
+    expect(post_1).toEqual('s')
   });
 
-  it(`CREATE BLOG`, async () => {
-    blog_1 = await testManager.createBlog('bbbb');
-    console.log(blog_1, 'createBlog');
+  it(`Get POSTs BY BLOG ID`, async () => {
+    await testManager.getPostsByBlogId(blog_1.id);
+    console.log(blog_1, 'blogid');
   });
+  // it(`CREATE BLOG`, async () => {
+  //   blog_1 = await testManager.createBlog('aaaa');
+  //   console.log(blog_1, 'createBlog');
+  // });
 
-  it(`CREATE BLOG`, async () => {
-    blog_1 = await testManager.createBlog('cccc');
-    console.log(blog_1, 'createBlog');
-  });
+  // it(`CREATE BLOG`, async () => {
+  //   blog_1 = await testManager.createBlog('bbbb');
+  //   console.log(blog_1, 'createBlog');
+  // });
 
-  it(`GET BLOGssss`, async () => {
-    const allBlogs: any = await testManager.getBlogs('','name','asc',2,1);
-    // let s :any[]= [];
-    // allBlogs.items.forEach((i:any) => {
-    //   s.push(i.name);
-    // });
-    expect(allBlogs).toEqual('fsdfdssdf');
+  // it(`CREATE BLOG`, async () => {
+  //   blog_1 = await testManager.createBlog('cccc');
+  //   console.log(blog_1, 'createBlog');
+  // });
 
-  });
+  // it(`GET BLOGssss`, async () => {
+  //   const allBlogs: any = await testManager.getBlogs('','name','asc',2,1);
+  //   // let s :any[]= [];
+  //   // allBlogs.items.forEach((i:any) => {
+  //   //   s.push(i.name);
+  //   // });
+  //   expect(allBlogs).toEqual('fsdfdssdf');
+  //
+  // });
   // it(`GET BLOG`, async () => {
   //   const getBlog: any = await testManager.getBlog(blog_1!.id);
   //   console.log(getBlog, 'getBLog');
   // });
   //
-  // it(`CREATE POST BY BLOG ID`, async () => {
-  //   post_1 = await testManager.craetePostByBlogId(blog_1.id);
-  //   console.log(post_1, 'post create by blogid');
-  // });
-  // it(`Get POSTs BY BLOG ID`, async () => {
-  //   await testManager.getPostsByBlogId(blog_1!.id);
-  // });
+
+
   // it(`GET POST`, async () => {
   //   const getPost: any = await testManager.getPost(post_1.id);
   //   console.log(getPost, 'getPOST');

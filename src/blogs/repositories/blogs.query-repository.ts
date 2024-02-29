@@ -20,7 +20,6 @@ export class BlogsQueryRepository {
     skip: number = 0,
     limit: number = 10,
   ): Promise<any> {
-    debugger;
     console.log(sortBy);
     let sb = sortBy ?? 'createdAt';
     console.log(sb);

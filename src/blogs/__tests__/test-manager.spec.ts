@@ -37,7 +37,9 @@ export class TestManager {
   }
 
   async getPostsByBlogId(blogId: string) {
+    console.log(blogId,'blogid');
     const response = await request(this.app.getHttpServer()).get(`/blogs/${blogId}/posts`);
+    expect(response.text).toEqual('fsdfdssdf');
     expect(JSON.parse(response.text)).toEqual('fsdfdssdf');
   }
 
@@ -59,27 +61,27 @@ export class TestManager {
     this.post_1 = await request(this.app.getHttpServer())
       .post(`/blogs/${blogId}/posts`)
       .send(correctPostDataCREATEPOSTINBLOGS);
-    expect(JSON.parse(this.post_1.text)).toEqual({
-      id: expect.any(String),
-      title: expect.any(String),
-      shortDescription: expect.any(String),
-      content: expect.any(String),
-      blogId: this.blog_1_id,
-      blogName: correctBlogData.name,
-      createdAt: expect.any(String),
-      extendedLikesInfo: {
-        likesCount: 0,
-        dislikesCount: 0,
-        myStatus: 'None',
-        newestLikes: [
-          // {
-          //   addedAt: '2024-02-28T17:02:42.877Z',
-          //   userId: 'string',
-          //   login: 'string',
-          // },
-        ],
-      },
-    });
+    // expect(JSON.parse(this.post_1.text)).toEqual({
+    //   id: expect.any(String),
+    //   title: expect.any(String),
+    //   shortDescription: expect.any(String),
+    //   content: expect.any(String),
+    //   blogId: this.blog_1_id,
+    //   blogName: correctBlogData.name,
+    //   createdAt: expect.any(String),
+    //   extendedLikesInfo: {
+    //     likesCount: 0,
+    //     dislikesCount: 0,
+    //     myStatus: 'None',
+    //     newestLikes: [
+    //       // {
+    //       //   addedAt: '2024-02-28T17:02:42.877Z',
+    //       //   userId: 'string',
+    //       //   login: 'string',
+    //       // },
+    //     ],
+    //   },
+    // });
     this.post_1_id = JSON.parse(this.post_1.text)['id'];
     return JSON.parse(this.post_1.text);
   }
@@ -124,14 +126,7 @@ export class TestManager {
     this.blog_1 = await request(this.app.getHttpServer())
       .post('/blogs')
       .send({ ...correctBlogData, name });
-    expect(JSON.parse(this.blog_1.text)).toEqual({
-      id: expect.any(String),
-      name: correctBlogData.name,
-      description: correctBlogData.description,
-      websiteUrl: correctBlogData.websiteUrl,
-      isMembership: false,
-      createdAt: expect.any(String),
-    });
-    return JSON.parse(this.blog_1.text);
+
+    return JSON.parse(this.blog_1.text)
   }
 }

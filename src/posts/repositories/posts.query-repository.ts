@@ -24,7 +24,6 @@ export class PostsQueryRepository {
     skip: number = 0,
     limit: number = 10,
   ): Promise<any> {
-    debugger;
     let checkposts = await this.postModel.find({ blogId: id }).lean();
     if (checkposts.length <1) {
       return false;

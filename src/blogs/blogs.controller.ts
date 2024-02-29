@@ -73,6 +73,7 @@ export class BlogsController {
     @Query('pageNumber') pageNumber?: number,
     @Query('pageSize') pageSize?: number,
   ) {
+    debugger
     // const posts: PostViewModel[] | false = await this.postsService.getPostsByBlogId(id);
     if (!id) {
       res.sendStatus(404);
@@ -106,7 +107,7 @@ export class BlogsController {
       items: changeBlogs,
     };
 
-    return response;
+    return res.send(response);
     // return posts ? res.send(posts) : res.sendStatus(404);
   }
 
