@@ -1,9 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import {
-  PostInputCreateModel,
-  PostViewModel,
-  WithId,
-} from '../types/post.types';
+import { PostInputCreateModel, PostViewModel } from '../types/post.types';
 import { Post, PostDocumentType } from '../domain/posts-schema';
 import { PostsRepository } from '../repositories/posts.repository';
 import { PostsQueryRepository } from '../repositories/posts.query-repository';
@@ -19,7 +15,7 @@ export class PostsService {
   async createPost(
     post: PostInputCreateModel,
     blogName: string,
-  ): Promise<WithId<PostViewModel> | false> {
+  ): Promise<PostViewModel | false> {
     const PostEntity: Post = {
       ...post,
       blogName: blogName,
@@ -49,9 +45,7 @@ export class PostsService {
     let mappedPosts: PostViewModel[];
     if (posts.length > 0) {
       mappedPosts = posts.map((p) => PostsMongoDataMapper.toView(p));
-      return mappedPosts;
     }
-    return false;
   }
 
   async getPosts() {

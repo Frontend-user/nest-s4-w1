@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, Put, Query, Res } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put, Query, Res } from '@nestjs/common';
 import { BlogsService } from './application/blogs.service';
 import { BlogInputCreateModel, BlogViewModel, WithId } from './types/blogs.types';
 import { BlogsMongoDataMapper } from './domain/blogs.mongo.dm';
@@ -54,13 +54,12 @@ export class BlogsController {
     return response;
   }
 
-
   @Get('/:id')
   async getBlogById(@Res() res, @Param('id') id: string): Promise<BlogViewModel | any> {
     const blog: BlogDocumentType | null = await this.blogsQueryRepository.getBlogById(id);
     if (!blog) {
       res.sendStatus(HTTP_STATUSES.NOT_FOUND_404);
-    return
+      return;
     }
     let mappedBlog = BlogsMongoDataMapper.toView(blog);
     res.status(200).send(mappedBlog);
@@ -150,7 +149,7 @@ export class BlogsController {
     res.sendStatus(response ? HTTP_STATUSES.NO_CONTENT_204 : HTTP_STATUSES.NOT_FOUND_404);
   }
 
-  @Put('/:id')
+  @Delete('/:id')
   async deleteBlog(@Res() res, @Param('id') id: string) {
     try {
       const response: boolean = await this.blogsService.deleteBlog(id);
