@@ -56,6 +56,7 @@ export class BlogsController {
   ): Promise<WithId<PostViewModel> | false> {
     const blog = await this.blogsService.getBlogById(id);
     if (blog) {
+      body.blogId = String(blog._id);
       const post: WithId<PostViewModel> | false =
         await this.postsService.createPost(body, blog.name);
       return post;
