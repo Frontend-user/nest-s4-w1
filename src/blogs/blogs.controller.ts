@@ -145,16 +145,10 @@ export class BlogsController {
   @Put('/:id')
   async updateBlog(
     @Res() res,
-    @Body() name: string,
-    @Body() description: string,
-    @Body() websiteUrl: string,
+    @Body() body:BlogInputCreateModel,
     @Param('id') id: string,
   ) {
-    const response: boolean = await this.blogsService.updateBlog(id, {
-      name,
-      description,
-      websiteUrl,
-    });
+    const response: boolean = await this.blogsService.updateBlog(id, body);
     res.sendStatus(response ? HTTP_STATUSES.NO_CONTENT_204 : HTTP_STATUSES.NOT_FOUND_404);
   }
 }
