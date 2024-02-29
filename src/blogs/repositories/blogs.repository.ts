@@ -1,7 +1,8 @@
 import { Blog, BlogDocumentType } from '../domain/blogs-schema';
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { Injectable } from '@nestjs/common';
+import { BlogInputCreateModel } from '../types/blogs.types';
 
 @Injectable()
 export class BlogsRepository {
@@ -19,5 +20,10 @@ export class BlogsRepository {
       _id: getCreatedBlog._id,
     });
     return blogToReturn ? blogToReturn : false;
+  }
+
+  async updateBlog(id: string, blogEntity: BlogInputCreateModel): Promise<boolean> {
+    const updateBlog = await this.blogModel.updateOne({ _id: new Types.ObjectId(id) }, blogEntity);
+    return updateBlog.matchedCount === 1;
   }
 }

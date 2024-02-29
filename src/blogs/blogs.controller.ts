@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, Query, Res } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Put, Query, Res } from '@nestjs/common';
 import { BlogsService } from './application/blogs.service';
 import { BlogInputCreateModel, BlogViewModel, WithId } from './types/blogs.types';
 import { BlogsMongoDataMapper } from './domain/blogs.mongo.dm';
@@ -10,6 +10,7 @@ import { BlogsQueryRepository } from './repositories/blogs.query-repository';
 import { blogsPaginate } from '../_common/paginate';
 import { PostsQueryRepository } from '../posts/repositories/posts.query-repository';
 import { PostsMongoDataMapper } from '../posts/domain/posts.mongo.dm';
+import { HTTP_STATUSES } from '../_common/constants';
 
 @Controller('/blogs')
 export class BlogsController {
@@ -73,7 +74,7 @@ export class BlogsController {
     @Query('pageNumber') pageNumber?: number,
     @Query('pageSize') pageSize?: number,
   ) {
-    debugger
+    debugger;
     // const posts: PostViewModel[] | false = await this.postsService.getPostsByBlogId(id);
     if (!id) {
       res.sendStatus(404);
@@ -140,4 +141,20 @@ export class BlogsController {
   // async s(@Body() dto:{id:number}) {
   //   return dto;
   // }
+
+  @Put('/:id')
+  async updateBlog(
+    @Res() res,
+    @Body() name: string,
+    @Body() description: string,
+    @Body() websiteUrl: string,
+    @Param('id') id: string,
+  ) {
+    const response: boolean = await this.blogsService.updateBlog(id, {
+      name,
+      description,
+      websiteUrl,
+    });
+    res.sendStatus(response ? HTTP_STATUSES.NO_CONTENT_204 : HTTP_STATUSES.NOT_FOUND_404);
+  }
 }
