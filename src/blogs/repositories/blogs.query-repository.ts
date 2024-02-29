@@ -31,6 +31,7 @@ export class BlogsQueryRepository {
     if (searchNameTerm) {
       const newRegexp = new RegExp(searchNameTerm, 'i');
       query.where('name').regex(newRegexp);
+      totalCount.where('name').regex(newRegexp);
     }
     let sort = {};
     sort[sb] = sd;
