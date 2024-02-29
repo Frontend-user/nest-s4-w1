@@ -7,6 +7,7 @@ import { PostInputCreateModel, PostViewModel } from '../posts/types/post.types';
 import { PostDocumentType } from '../posts/domain/posts-schema';
 import { PostsService } from '../posts/application/posts.service';
 import { BlogsQueryRepository } from './repositories/blogs.query-repository';
+import { blogsPaginate } from '../_common/paginate';
 
 @Controller('/blogs')
 export class BlogsController {
@@ -21,15 +22,28 @@ export class BlogsController {
     @Query('searchNameTerm') searchNameTerm?: string,
     @Query('sortBy') sortBy?: string,
     @Query('sortDirection') sortDirection?: string,
+    @Query('pageNumber') pageNumber?: number,
+    @Query('pageSize') pageSize?: number,
   ) {
-    const blogs = await this.blogsQueryRepository.getBlogs(searchNameTerm, sortBy, sortDirection);
+    const { skip, limit, newPageNumber, newPageSize } = blogsPaginate.getPagination(
+      pageNumber,
+      pageSize,
+    );
+    const { totalCount, blogs } = await this.blogsQueryRepository.getBlogs(
+      searchNameTerm,
+      sortBy,
+      sortDirection,
+      skip,
+      limit,
+    );
     const changeBlogs = blogs.map((b: BlogDocumentType) => BlogsMongoDataMapper.toView(b));
+    let pagesCount = Math.ceil(totalCount / newPageSize)
 
     const response = {
-      // "pagesCount": pagesCount,
-      // "page": newPageNumber,
-      // "pageSize": newPageSize,
-      // "totalCount": allBlogs.length,
+      "pagesCount": pagesCount,
+      "page": newPageNumber,
+      "pageSize": newPageSize,
+      "totalCount": totalCount,
       items: changeBlogs,
     };
 

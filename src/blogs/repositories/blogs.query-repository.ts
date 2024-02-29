@@ -3,6 +3,7 @@ import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { Injectable } from '@nestjs/common';
 import { Types } from 'mongoose';
+import { skip } from 'rxjs';
 
 @Injectable()
 export class BlogsQueryRepository {
@@ -16,29 +17,29 @@ export class BlogsQueryRepository {
     searchNameTerm?: string,
     sortBy?: string,
     sortDirection?: string,
-  ): Promise<Blog[]> {
+    skip: number = 0,
+    limit: number = 10,
+  ): Promise<any> {
     debugger;
     console.log(sortBy);
     let sb = sortBy ?? 'createdAt';
     console.log(sb);
     let sd = sortDirection ?? 'desc';
-    // getFindings(searchNameTerm?:string){
-    //   let findQuery: QueryFindType = {}
-    //   if (searchNameTerm) {
-    //     findQuery["name"] = {$regex: searchNameTerm, $options: 'i'};
-    //   }
-    //   return findQuery
-    // }
+
     let query = this.blogModel.find();
+    let totalCount = this.blogModel.find();
     if (searchNameTerm) {
       const newRegexp = new RegExp(searchNameTerm, 'i');
       query.where('name').regex(newRegexp);
     }
     let sort = {};
     sort[sb] = sd;
-    let blogs = await query.sort(sort).lean();
+
+    let blogs = await query.sort(sort).skip(skip).limit(limit).lean();
     if (blogs.length > 0) {
-      return blogs;
+      const allBlogs = await totalCount.countDocuments();
+
+      return { totalCount: allBlogs, blogs: blogs };
     } else return [];
     // }
     // let s = await this.blogModel.find({});

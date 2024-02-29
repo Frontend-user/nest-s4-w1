@@ -41,9 +41,15 @@ export class TestManager {
     expect(JSON.parse(response.text)).toEqual('fsdfdssdf');
   }
 
-  async getBlogs(searchNameTerm?: string, sortBy?: string, sortDirection?: string) {
+  async getBlogs(
+    searchNameTerm?: string,
+    sortBy?: string,
+    sortDirection?: string,
+    pageSize?: number,
+    pageNumber?: number,
+  ) {
     const response = await request(this.app.getHttpServer()).get(
-      `/blogs?searchNameTerm=${searchNameTerm}&sortBy=${sortBy}&sortDirection=${sortDirection}`,
+      `/blogs?searchNameTerm=${searchNameTerm}&sortBy=${sortBy}&sortDirection=${sortDirection}&pageNumber=${pageNumber}&pageSize=${pageSize}`,
     );
     return JSON.parse(response.text);
   }

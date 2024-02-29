@@ -60,7 +60,7 @@ describe('Blogs', () => {
   });
 
   it(`GET BLOGssss`, async () => {
-    const allBlogs: any = await testManager.getBlogs('','name','name','asc');
+    const allBlogs: any = await testManager.getBlogs('','name','asc',2,1);
     // let s :any[]= [];
     // allBlogs.items.forEach((i:any) => {
     //   s.push(i.name);
