@@ -41,8 +41,8 @@ export class BlogsController {
 
     const response = {
       "pagesCount": pagesCount,
-      "page": newPageNumber,
-      "pageSize": newPageSize,
+      "page": +newPageNumber,
+      "pageSize": +newPageSize,
       "totalCount": totalCount,
       items: changeBlogs,
     };
