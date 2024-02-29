@@ -54,10 +54,16 @@ export class BlogsController {
     return response;
   }
 
+
   @Get('/:id')
   async getBlogById(@Res() res, @Param('id') id: string): Promise<BlogViewModel | any> {
-    const response: BlogDocumentType | null = await this.blogsQueryRepository.getBlogById(id);
-    res.sendStatus(response?.id ? BlogsMongoDataMapper.toView(response) : HTTP_STATUSES.NOT_FOUND_404);
+    const blog: BlogDocumentType | null = await this.blogsQueryRepository.getBlogById(id);
+    if (!blog) {
+      res.sendStatus(HTTP_STATUSES.NOT_FOUND_404);
+    return
+    }
+    let mappedBlog = BlogsMongoDataMapper.toView(blog);
+    res.status(200).send(mappedBlog);
   }
 
   @Get('/:id/posts')

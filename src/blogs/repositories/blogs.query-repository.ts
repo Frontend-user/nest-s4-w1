@@ -10,7 +10,7 @@ export class BlogsQueryRepository {
   constructor(@InjectModel(Blog.name) private blogModel: Model<Blog>) {}
 
   async getBlogById(id: string): Promise<BlogDocumentType | null> {
-    return await this.blogModel.findOne({ _id: new Types.ObjectId(id) });
+    return await this.blogModel.findOne({ _id: new Types.ObjectId(id) }).lean();
   }
 
   async getBlogs(
