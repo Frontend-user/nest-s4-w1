@@ -74,7 +74,9 @@ export class BlogsController {
     @Query('pageSize') pageSize?: number,
   ) {
     // const posts: PostViewModel[] | false = await this.postsService.getPostsByBlogId(id);
-
+  if(!id){
+    res.sendStatus(404)
+  }
     const { skip, limit, newPageNumber, newPageSize } = blogsPaginate.getPagination(
       pageNumber,
       pageSize,
