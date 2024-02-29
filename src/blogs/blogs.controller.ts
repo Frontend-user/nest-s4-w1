@@ -8,6 +8,8 @@ import { PostDocumentType } from '../posts/domain/posts-schema';
 import { PostsService } from '../posts/application/posts.service';
 import { BlogsQueryRepository } from './repositories/blogs.query-repository';
 import { blogsPaginate } from '../_common/paginate';
+import { PostsQueryRepository } from '../posts/repositories/posts.query-repository';
+import { PostsMongoDataMapper } from '../posts/domain/posts.mongo.dm';
 
 @Controller('/blogs')
 export class BlogsController {
@@ -15,6 +17,7 @@ export class BlogsController {
     protected blogsService: BlogsService,
     protected postsService: PostsService,
     protected blogsQueryRepository: BlogsQueryRepository,
+    protected postsQueryRepository: PostsQueryRepository,
   ) {}
 
   @Get()
@@ -37,13 +40,13 @@ export class BlogsController {
       limit,
     );
     const changeBlogs = blogs.map((b: BlogDocumentType) => BlogsMongoDataMapper.toView(b));
-    let pagesCount = Math.ceil(totalCount / newPageSize)
+    let pagesCount = Math.ceil(totalCount / newPageSize);
 
     const response = {
-      "pagesCount": pagesCount,
-      "page": +newPageNumber,
-      "pageSize": +newPageSize,
-      "totalCount": totalCount,
+      pagesCount: pagesCount,
+      page: +newPageNumber,
+      pageSize: +newPageSize,
+      totalCount: totalCount,
       items: changeBlogs,
     };
 
@@ -61,9 +64,42 @@ export class BlogsController {
   }
 
   @Get('/:id/posts')
-  async getPostByBlogId(@Param('id') id: string, @Res() res) {
-    const posts: PostViewModel[] | false = await this.postsService.getPostsByBlogId(id);
-    return posts ? res.send(posts) : res.sendStatus(404);
+  async getPostByBlogId(
+    @Param('id') id: string,
+    @Res() res,
+    @Query('searchNameTerm') searchNameTerm?: string,
+    @Query('sortBy') sortBy?: string,
+    @Query('sortDirection') sortDirection?: string,
+    @Query('pageNumber') pageNumber?: number,
+    @Query('pageSize') pageSize?: number,
+  ) {
+    // const posts: PostViewModel[] | false = await this.postsService.getPostsByBlogId(id);
+
+    const { skip, limit, newPageNumber, newPageSize } = blogsPaginate.getPagination(
+      pageNumber,
+      pageSize,
+    );
+    const { totalCount, posts } = await this.postsQueryRepository.getPostsByBlogId(
+      id,
+      searchNameTerm,
+      sortBy,
+      sortDirection,
+      skip,
+      limit,
+    );
+    const changeBlogs = posts.map((b: PostDocumentType) => PostsMongoDataMapper.toView(b));
+    let pagesCount = Math.ceil(totalCount / newPageSize);
+
+    const response = {
+      pagesCount: pagesCount,
+      page: +newPageNumber,
+      pageSize: +newPageSize,
+      totalCount: totalCount,
+      items: changeBlogs,
+    };
+
+    return response;
+    // return posts ? res.send(posts) : res.sendStatus(404);
   }
 
   @Post()
