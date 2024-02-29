@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, Res } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Query, Res } from '@nestjs/common';
 import { BlogsService } from './application/blogs.service';
 import { BlogInputCreateModel, BlogViewModel, WithId } from './types/blogs.types';
 import { BlogsMongoDataMapper } from './domain/blogs.mongo.dm';
@@ -17,20 +17,39 @@ export class BlogsController {
   ) {}
 
   @Get()
-  async getBlogs() {
-    const blogs = await this.blogsService.getBlogs();
+  async getBlogs(
+    @Query('searchNameTerm') searchNameTerm?: string,
+    @Query('sortBy') sortBy?: string,
+    @Query('sortDirection') sortDirection?: string,
+  ) {
+    const blogs = await this.blogsQueryRepository.getBlogs(searchNameTerm, sortBy, sortDirection);
     const changeBlogs = blogs.map((b: BlogDocumentType) => BlogsMongoDataMapper.toView(b));
-    return changeBlogs;
+
+    const response = {
+      // "pagesCount": pagesCount,
+      // "page": newPageNumber,
+      // "pageSize": newPageSize,
+      // "totalCount": allBlogs.length,
+      items: changeBlogs,
+    };
+
+    return response;
   }
 
   @Get('/:id')
-  async getBlogById(@Param() id: string): Promise<BlogViewModel | false> {
+  async getBlogById(@Param('id') id: string): Promise<BlogViewModel | false> {
     const blog: BlogDocumentType | null = await this.blogsQueryRepository.getBlogById(id);
     if (blog) {
       const changeBlog: BlogViewModel = BlogsMongoDataMapper.toView(blog);
       return changeBlog;
     }
     return false;
+  }
+
+  @Get('/:id/posts')
+  async getPostByBlogId(@Param('id') id: string, @Res() res) {
+    const posts: PostViewModel[] | false = await this.postsService.getPostsByBlogId(id);
+    return posts ? res.send(posts) : res.sendStatus(404);
   }
 
   @Post()
@@ -55,13 +74,6 @@ export class BlogsController {
       return post ? res.send(post) : res.sendStatus(404);
     }
     res.sendStatus(404);
-  }
-
-  @Get('/:id/posts')
-  async getPostByBlogId(@Param('id') id: string, @Res() res) {
-    debugger;
-    const posts: PostViewModel[] | false = await this.postsService.getPostsByBlogId(id);
-    return posts ? res.send(posts) : res.sendStatus(404);
   }
 
   //

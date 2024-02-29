@@ -30,7 +30,4 @@ export class BlogsService {
     return await this.blogsQueryRepository.getBlogById(id);
   }
 
-  async getBlogs() {
-    return await this.blogsQueryRepository.getBlogs();
-  }
 }

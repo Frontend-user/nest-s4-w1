@@ -24,9 +24,7 @@ export class TestManager {
 
   async getBlog(blogId: string) {
     this.blog_1_id = JSON.parse(this.blog_1.text)['id'];
-    const getOneBlog = await request(this.app.getHttpServer()).get(
-      `/blogs/${blogId}`,
-    );
+    const getOneBlog = await request(this.app.getHttpServer()).get(`/blogs/${blogId}`);
     expect(JSON.parse(getOneBlog.text)).toEqual({
       id: expect.any(String),
       name: correctBlogData.name,
@@ -38,11 +36,16 @@ export class TestManager {
     return JSON.parse(getOneBlog.text);
   }
 
-  async getPostsByBlogId(blogId:string) {
-    const response = await request(this.app.getHttpServer()).get(
-      `/blogs/${blogId}/posts`,
-    );
+  async getPostsByBlogId(blogId: string) {
+    const response = await request(this.app.getHttpServer()).get(`/blogs/${blogId}/posts`);
     expect(JSON.parse(response.text)).toEqual('fsdfdssdf');
+  }
+
+  async getBlogs(searchNameTerm?: string, sortBy?: string, sortDirection?: string) {
+    const response = await request(this.app.getHttpServer()).get(
+      `/blogs?searchNameTerm=${searchNameTerm}&sortBy=${sortBy}&sortDirection=${sortDirection}`,
+    );
+    return JSON.parse(response.text);
   }
 
   async craetePostByBlogId(blogId: string) {
@@ -77,9 +80,7 @@ export class TestManager {
 
   async getPost(postId: string) {
     this.post_1_id = JSON.parse(this.post_1.text)['id'];
-    const getOnePost = await request(this.app.getHttpServer()).get(
-      `/posts/${postId}`,
-    );
+    const getOnePost = await request(this.app.getHttpServer()).get(`/posts/${postId}`);
     expect(JSON.parse(getOnePost.text)).toEqual({
       id: expect.any(String),
       title: expect.any(String),
@@ -110,15 +111,13 @@ export class TestManager {
   }
 
   async deleteBlog() {
-    await request(this.app.getHttpServer())
-      .delete('/testing/all-data')
-      .expect(204);
+    await request(this.app.getHttpServer()).delete('/testing/all-data').expect(204);
   }
 
-  async createBlog() {
+  async createBlog(name: string = 'string') {
     this.blog_1 = await request(this.app.getHttpServer())
       .post('/blogs')
-      .send(correctBlogData);
+      .send({ ...correctBlogData, name });
     expect(JSON.parse(this.blog_1.text)).toEqual({
       id: expect.any(String),
       name: correctBlogData.name,
