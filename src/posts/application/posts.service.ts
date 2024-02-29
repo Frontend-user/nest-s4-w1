@@ -1,5 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import { PostInputCreateModel, PostViewModel } from '../types/post.types';
+import {
+  PostInputCreateModel,
+  PostViewModel,
+  WithId,
+} from '../types/post.types';
 import { Post, PostDocumentType } from '../domain/posts-schema';
 import { PostsRepository } from '../repositories/posts.repository';
 import { PostsQueryRepository } from '../repositories/posts.query-repository';
@@ -15,7 +19,7 @@ export class PostsService {
   async createPost(
     post: PostInputCreateModel,
     blogName: string,
-  ): Promise<PostViewModel | false> {
+  ): Promise<WithId<PostViewModel> | false> {
     const PostEntity: Post = {
       ...post,
       blogName: blogName,

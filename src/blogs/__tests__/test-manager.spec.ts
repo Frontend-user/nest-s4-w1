@@ -7,11 +7,10 @@ export const correctBlogData = {
   websiteUrl: 'https://TXOxcSX82Olmsdf8sXEHAWm.ZFTe4',
 };
 
-export const correctPostData = {
+export const correctPostDataCREATEPOSTINBLOGS = {
   title: 'string',
   shortDescription: 'string',
   content: 'string',
-  blogId: '',
 };
 
 export class TestManager {
@@ -47,10 +46,10 @@ export class TestManager {
   }
 
   async craetePostByBlogId(blogId: string) {
-    correctPostData.blogId = this.blog_1_id;
+    // correctPostDataCREATEPOSTINBLOGS.blogId = this.blog_1_id;
     this.post_1 = await request(this.app.getHttpServer())
       .post(`/blogs/${blogId}/posts`)
-      .send(correctPostData);
+      .send(correctPostDataCREATEPOSTINBLOGS);
     expect(JSON.parse(this.post_1.text)).toEqual({
       id: expect.any(String),
       title: expect.any(String),

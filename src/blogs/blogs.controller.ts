@@ -10,12 +10,14 @@ import { BlogDocumentType } from './domain/blogs-schema';
 import { PostInputCreateModel, PostViewModel } from '../posts/types/post.types';
 import { PostDocumentType } from '../posts/domain/posts-schema';
 import { PostsService } from '../posts/application/posts.service';
+import { BlogsQueryRepository } from './repositories/blogs.query-repository';
 
 @Controller('/blogs')
 export class BlogsController {
   constructor(
     protected blogsService: BlogsService,
     protected postsService: PostsService,
+    protected blogsQueryRepository: BlogsQueryRepository,
   ) {}
 
   @Get()
@@ -30,7 +32,7 @@ export class BlogsController {
   @Get('/:id')
   async getBlogById(@Param() id: string): Promise<BlogViewModel | false> {
     const blog: BlogDocumentType | null =
-      await this.blogsService.getBlogById(id);
+      await this.blogsQueryRepository.getBlogById(id);
     if (blog) {
       const changeBlog: BlogViewModel = BlogsMongoDataMapper.toView(blog);
       return changeBlog;
@@ -50,18 +52,15 @@ export class BlogsController {
   @Post('/:id/posts')
   async createPost(
     @Body() body: PostInputCreateModel,
-    // ): Promise<WithId<BlogViewModel> | false> {
-  ) {
-    const blog = await this.blogsService.getBlogById(body.blogId);
+    @Param() id: string,
+  ): Promise<WithId<PostViewModel> | false> {
+    const blog = await this.blogsService.getBlogById(id);
     if (blog) {
-      const post: PostViewModel | false = await this.postsService.createPost(
-        body,
-        blog.name,
-      );
+      const post: WithId<PostViewModel> | false =
+        await this.postsService.createPost(body, blog.name);
       return post;
     }
     return false;
-    // return blog ? BlogsMongoDataMapper.toView(blog) : false;
   }
 
   @Get('/:id/posts')
