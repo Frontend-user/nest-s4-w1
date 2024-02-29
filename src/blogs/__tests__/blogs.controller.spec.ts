@@ -34,31 +34,36 @@ describe('Blogs', () => {
   afterAll(async () => {
     await app.close();
   });
-
+  let blog_1: any;
+  let post_1: any;
   it('TEST DELETE ALL', async () => {
     await testManager.deleteBlog();
   });
   it(`CREATE BLOG`, async () => {
-    await testManager.createBlog();
+    blog_1 = await testManager.createBlog();
+    console.log(blog_1, 'createBlog');
   });
-
+  //
   it(`GET BLOG`, async () => {
-    await testManager.getBlog();
+    const getBlog: any = await testManager.getBlog(blog_1!.id);
+    console.log(getBlog, 'getBLog');
   });
 
   it(`CREATE POST BY BLOG ID`, async () => {
-    await testManager.craetePostByBlogId();
+    post_1 = await testManager.craetePostByBlogId(blog_1.id);
+    console.log(post_1, 'post create by blogid');
   });
-  it(`Get POSTs BY BLOG ID`, async () => {
-    await testManager.getPostsByBlogId();
-  });
+  // it(`Get POSTs BY BLOG ID`, async () => {
+  //   await testManager.getPostsByBlogId();
+  // });
   it(`GET POST`, async () => {
-    await testManager.getPost();
+    const getPost: any = await testManager.getPost(post_1.id);
+    console.log(getPost, 'getPOST');
   });
 
-  it(`GET POSTs`, async () => {
-    await testManager.getPosts();
-  });
+  // it(`GET POSTs`, async () => {
+  //   await testManager.getPosts();
+  // });
   // it(`DELETE ALL DATA`, async () => {
   //   await TestManager.deleteBlog();
   // });

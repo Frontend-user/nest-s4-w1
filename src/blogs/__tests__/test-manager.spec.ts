@@ -23,10 +23,10 @@ export class TestManager {
 
   constructor(protected readonly app: INestApplication) {}
 
-  async getBlog() {
+  async getBlog(blogId: string) {
     this.blog_1_id = JSON.parse(this.blog_1.text)['id'];
     const getOneBlog = await request(this.app.getHttpServer()).get(
-      `/blogs/${this.blog_1_id}`,
+      `/blogs/${blogId}`,
     );
     expect(JSON.parse(getOneBlog.text)).toEqual({
       id: expect.any(String),
@@ -36,6 +36,7 @@ export class TestManager {
       isMembership: false,
       createdAt: expect.any(String),
     });
+    return JSON.parse(getOneBlog.text);
   }
 
   async getPostsByBlogId() {
@@ -45,10 +46,10 @@ export class TestManager {
     expect(JSON.parse(response.text)).toEqual('fsdfdssdf');
   }
 
-  async craetePostByBlogId() {
+  async craetePostByBlogId(blogId: string) {
     correctPostData.blogId = this.blog_1_id;
     this.post_1 = await request(this.app.getHttpServer())
-      .post(`/blogs/${this.blog_1_id}/posts`)
+      .post(`/blogs/${blogId}/posts`)
       .send(correctPostData);
     expect(JSON.parse(this.post_1.text)).toEqual({
       id: expect.any(String),
@@ -72,12 +73,13 @@ export class TestManager {
       },
     });
     this.post_1_id = JSON.parse(this.post_1.text)['id'];
+    return JSON.parse(this.post_1.text);
   }
 
-  async getPost() {
+  async getPost(postId: string) {
     this.post_1_id = JSON.parse(this.post_1.text)['id'];
     const getOnePost = await request(this.app.getHttpServer()).get(
-      `/posts/${this.post_1_id}`,
+      `/posts/${postId}`,
     );
     expect(JSON.parse(getOnePost.text)).toEqual({
       id: expect.any(String),
@@ -100,6 +102,7 @@ export class TestManager {
         ],
       },
     });
+    return JSON.parse(getOnePost.text);
   }
 
   async getPosts() {
@@ -125,5 +128,6 @@ export class TestManager {
       isMembership: false,
       createdAt: expect.any(String),
     });
+    return JSON.parse(this.blog_1.text);
   }
 }

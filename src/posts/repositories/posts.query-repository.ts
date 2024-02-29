@@ -17,6 +17,6 @@ export class PostsQueryRepository {
   }
 
   async getPostsByBlogId(id): Promise<PostDocumentType[] | null> {
-    return await this.postModel.find({ blogId: id }).exec();
+    return await this.postModel.find({ blogId: new Types.ObjectId(id) }).lean();
   }
 }

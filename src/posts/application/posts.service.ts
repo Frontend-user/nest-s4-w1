@@ -39,7 +39,15 @@ export class PostsService {
   async getPostsByBlogId(id: string) {
     const posts: PostDocumentType[] | null =
       await this.postsQueryRepository.getPostsByBlogId(id);
-    return posts ? posts.map((p) => PostsMongoDataMapper.toView(p)) : false;
+    if (!posts) {
+      return false;
+    }
+    let mappedPosts: PostViewModel[];
+    if (posts.length > 0) {
+      mappedPosts = posts.map((p) => PostsMongoDataMapper.toView(p));
+      return mappedPosts;
+    }
+    return false;
   }
 
   async getPosts() {
