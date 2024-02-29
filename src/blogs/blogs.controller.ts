@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Res } from '@nestjs/common';
 import { BlogsService } from './application/blogs.service';
 import {
   BlogInputCreateModel,
@@ -53,23 +53,24 @@ export class BlogsController {
   async createPost(
     @Body() body: PostInputCreateModel,
     @Param() id: string,
-  ): Promise<WithId<PostViewModel> | false> {
+    @Res() res,
+  ): Promise<WithId<PostViewModel> | undefined> {
     const blog = await this.blogsService.getBlogById(id);
     if (blog) {
       body.blogId = String(blog._id);
       const post: WithId<PostViewModel> | false =
         await this.postsService.createPost(body, blog.name);
-      return post;
+      return post ? post : res.sendStatus(404);
     }
-    return false;
+    res.sendStatus(404);
   }
 
   @Get('/:id/posts')
-  async getPostsByBlogId(@Param('id') id: string) {
+  async getPostsByBlogId(@Param('id') id: string, @Res() res) {
     debugger;
     const posts: PostViewModel[] | false =
       await this.postsService.getPostsByBlogId(id);
-    return posts;
+    return posts ? posts : res.sendStatus(404);
   }
 
   //
