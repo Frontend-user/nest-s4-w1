@@ -6,8 +6,7 @@ import { Post, PostDocumentType } from '../domain/posts-schema';
 
 @Injectable()
 export class PostsQueryRepository {
-  constructor(@InjectModel(Post.name) private postModel: Model<Post>) {
-  }
+  constructor(@InjectModel(Post.name) private postModel: Model<Post>) {}
 
   async getPostById(id: string): Promise<PostDocumentType | null> {
     return await this.postModel.findOne({ _id: new Types.ObjectId(id) });
@@ -17,8 +16,19 @@ export class PostsQueryRepository {
     return await this.postModel.find().exec();
   }
 
-  async getPostsByBlogId(id, searchNameTerm?: string, sortBy?: string, sortDirection?: string, skip: number = 0, limit: number = 10): Promise<any> {
+  async getPostsByBlogId(
+    id,
+    searchNameTerm?: string,
+    sortBy?: string,
+    sortDirection?: string,
+    skip: number = 0,
+    limit: number = 10,
+  ): Promise<any> {
     debugger;
+    let checkposts = await this.postModel.find({ blogId: id }).lean();
+    if (checkposts.length <1) {
+      return false;
+    }
     console.log(sortBy);
     let sb = sortBy ?? 'createdAt';
     console.log(sb);
@@ -45,5 +55,4 @@ export class PostsQueryRepository {
     // return s;
     // return await this.postModel.find({ blogId: id }).exec();
   }
-
 }

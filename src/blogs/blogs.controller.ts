@@ -74,14 +74,15 @@ export class BlogsController {
     @Query('pageSize') pageSize?: number,
   ) {
     // const posts: PostViewModel[] | false = await this.postsService.getPostsByBlogId(id);
-  if(!id){
-    res.sendStatus(404)
-  }
+    if (!id) {
+      res.sendStatus(404);
+      return;
+    }
     const { skip, limit, newPageNumber, newPageSize } = blogsPaginate.getPagination(
       pageNumber,
       pageSize,
     );
-    const { totalCount, posts } = await this.postsQueryRepository.getPostsByBlogId(
+    const result = await this.postsQueryRepository.getPostsByBlogId(
       id,
       searchNameTerm,
       sortBy,
@@ -89,6 +90,11 @@ export class BlogsController {
       skip,
       limit,
     );
+    if (!result) {
+      res.sendStatus(404);
+      return;
+    }
+    let { totalCount, posts } = result;
     const changeBlogs = posts.map((b: PostDocumentType) => PostsMongoDataMapper.toView(b));
     let pagesCount = Math.ceil(totalCount / newPageSize);
 
