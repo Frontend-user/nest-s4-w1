@@ -92,7 +92,9 @@ export class BlogsController {
       skip,
       limit,
     );
-    if (!result) {
+
+    const blog = await this.blogsService.getBlogById(id);
+    if (!blog) {
       res.sendStatus(404);
       return;
     }
