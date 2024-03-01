@@ -14,15 +14,22 @@ import { PostSchema, Post } from './posts/domain/posts-schema';
 import { PostsController } from './posts/posts.controller';
 import { BlogsQueryRepository } from './blogs/repositories/blogs.query-repository';
 import { PostsQueryRepository } from './posts/repositories/posts.query-repository';
+import { UsersController } from './users/users.controller';
+import { UsersQueryRepository } from './users/repositories/users.query-repository';
+import { UsersRepository } from './users/repositories/users.repository';
+import { UsersService } from './users/application/users.service';
+import { User, UserSchema } from './users/domain/users-schema';
+import { JwtService } from './_common/jwt-service';
 
 @Module({
   imports: [
     ConfigModule.forRoot(),
+    MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
     MongooseModule.forFeature([{ name: Post.name, schema: PostSchema }]),
     MongooseModule.forFeature([{ name: Blog.name, schema: BlogSchema }]),
     MongooseModule.forRoot(process.env.MONGO_NEST_URL as string),
   ],
-  controllers: [AppController, BlogsController, PostsController],
+  controllers: [AppController, BlogsController, PostsController, UsersController],
   providers: [
     AppService,
     BlogsService,
@@ -31,6 +38,10 @@ import { PostsQueryRepository } from './posts/repositories/posts.query-repositor
     PostsRepository,
     PostsService,
     PostsQueryRepository,
+    UsersService,
+    UsersQueryRepository,
+    UsersRepository,
+    JwtService,
   ],
 })
 export class AppModule {}
