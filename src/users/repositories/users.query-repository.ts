@@ -24,12 +24,12 @@ export class UsersQueryRepository {
     }
     console.log(sb);
     const sd = sortDirection ?? 'desc';
-    let findQuery;
-    if (searchEmailTerm && searchLoginTerm) {
-      findQuery = UsersMongoDataMapper.__getUsersFindings(searchLoginTerm, searchEmailTerm);
-    } else {
-      findQuery = UsersMongoDataMapper.__getUserSortingOR(searchLoginTerm, searchEmailTerm);
-    }
+
+    // if (searchEmailTerm && searchLoginTerm) {
+    //   findQuery = UsersMongoDataMapper.__getUsersFindings(searchLoginTerm, searchEmailTerm);
+    // } else {
+    const findQuery = UsersMongoDataMapper.__getUserSortingOR(searchLoginTerm, searchEmailTerm);
+    // }
     const query = this.userModel.find(findQuery);
     const totalCount = this.userModel.find(findQuery);
     // if (searchLoginTerm || searchEmailTerm) {
