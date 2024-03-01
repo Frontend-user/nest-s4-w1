@@ -14,8 +14,15 @@ export class UsersRepository {
     return response ? getCreatedUser : false;
   }
 
-  async deleteUser(id: string) {
+
+
+  async deleteUser(id: string): Promise<any> {
     const response = await this.userModel.deleteOne({ _id: new Types.ObjectId(id) });
-    return !!response.deletedCount;
+    return response.deletedCount === 1 ? true : false;
+  }
+
+  async deleteAllData() {
+    await this.userModel.deleteMany({});
+    return true;
   }
 }

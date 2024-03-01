@@ -7,9 +7,6 @@ import { BlogsQueryRepository } from '../blogs/repositories/blogs.query-reposito
 import { HTTP_STATUSES } from '../_common/constants';
 import { UsersMongoDataMapper } from './domain/users.mongo.dm';
 import { blogsPaginate } from '../_common/paginate';
-import { BlogDocumentType } from '../blogs/domain/blogs-schema';
-import { BlogsMongoDataMapper } from '../blogs/domain/blogs.mongo.dm';
-
 @Controller('/users')
 export class UsersController {
   constructor(
@@ -92,6 +89,16 @@ export class UsersController {
       }
     } catch (error) {
       res.sendStatus(HTTP_STATUSES.SERVER_ERROR_500);
+    }
+  }
+
+  @Delete('/:id')
+  async deleteUser(@Res() res, @Param('id') id: string) {
+    try {
+      const response: any = await this.usersService.deleteUser(id);
+      res.send(response ? HTTP_STATUSES.NO_CONTENT_204 : HTTP_STATUSES.NOT_FOUND_404);
+    } catch (error) {
+      res.sendStatus(HTTP_STATUSES.NOT_FOUND_404);
     }
   }
 }

@@ -40,4 +40,12 @@ export class UsersService {
     }
     return newUser;
   }
+
+  async deleteAllData() {
+    return await this.usersRepositories.deleteAllData();
+  }
+
+  async deleteUser(id: string): Promise<any> {
+    return await this.usersRepositories.deleteUser(id);
+  }
 }
