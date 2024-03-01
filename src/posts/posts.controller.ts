@@ -2,9 +2,6 @@ import { Body, Controller, Delete, Get, Param, Post, Put, Query, Res } from '@ne
 import { PostsService } from './application/posts.service';
 import { PostsRepository } from './repositories/posts.repository';
 import { PostsQueryRepository } from './repositories/posts.query-repository';
-import { BlogInputCreateModel, BlogViewModel } from '../blogs/types/blogs.types';
-import { BlogDocumentType } from '../blogs/domain/blogs-schema';
-import { BlogsMongoDataMapper } from '../blogs/domain/blogs.mongo.dm';
 import { PostDocumentType } from './domain/posts-schema';
 import { PostInputCreateModel, PostViewModel } from './types/post.types';
 import { PostsMongoDataMapper } from './domain/posts.mongo.dm';
@@ -102,10 +99,12 @@ export class PostsController {
   @Delete('/:id')
   async deletePost(@Res() res, @Param('id') id: string) {
     try {
-      const response: boolean = await this.postsService.deletePost(id);
-      res.sendStatus(response ? HTTP_STATUSES.NO_CONTENT_204 : HTTP_STATUSES.NOT_FOUND_404);
+      // const response: boolean = await this.postsService.deletePost(id);
+      let s: any = this.postsQueryRepository.getPostById(id);
+      res.send(s);
+      // res.sendStatus(response ? HTTP_STATUSES.NO_CONTENT_204 : HTTP_STATUSES.NOT_FOUND_404);
     } catch (error) {
-      res.sendStatus(HTTP_STATUSES.NOT_FOUND_404);
+      res.send(error);
     }
   }
 }
