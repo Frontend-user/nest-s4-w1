@@ -4,7 +4,7 @@ import { Post, PostDocumentType } from '../domain/posts-schema';
 import { PostsRepository } from '../repositories/posts.repository';
 import { PostsQueryRepository } from '../repositories/posts.query-repository';
 import { PostsMongoDataMapper } from '../domain/posts.mongo.dm';
-import { BlogInputCreateModel, WithId } from "../../blogs/types/blogs.types";
+import { BlogInputCreateModel, WithId } from '../../blogs/types/blogs.types';
 
 @Injectable()
 export class PostsService {
@@ -50,6 +50,7 @@ export class PostsService {
   async updatePost(id: string, post: PostInputCreateModel): Promise<boolean> {
     return await this.postsRepository.updatePost(id, post);
   }
+
   async getPosts() {
     return await this.postsQueryRepository.getPosts();
   }
@@ -58,8 +59,7 @@ export class PostsService {
     return await this.postsRepository.deleteAllData();
   }
 
-  async deleteBlog(id: string): Promise<boolean> {
+  async deletePost(id: string): Promise<boolean> {
     return await this.postsRepository.deletePost(id);
   }
-
 }
