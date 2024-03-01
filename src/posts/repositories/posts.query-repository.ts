@@ -9,7 +9,12 @@ export class PostsQueryRepository {
   constructor(@InjectModel(Post.name) private postModel: Model<Post>) {}
 
   async getPostById(id: string): Promise<PostDocumentType | null> {
-    return await this.postModel.findOne({ _id: new Types.ObjectId(id) });
+    try {
+      let a: any = await this.postModel.findOne({ _id: new Types.ObjectId(id) }).lean();
+      return a;
+    } catch (e) {
+      return null;
+    }
   }
 
   async getPosts(
@@ -47,8 +52,9 @@ export class PostsQueryRepository {
     skip: number = 0,
     limit: number = 10,
   ): Promise<any> {
-    const checkposts = await this.postModel.find({ blogId: id }).lean();
-    if (checkposts.length < 1) {
+    try {
+      const checkposts = await this.postModel.find({ blogId: id }).lean();
+    } catch (e) {
       return false;
     }
     console.log(sortBy);

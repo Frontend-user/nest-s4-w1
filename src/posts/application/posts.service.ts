@@ -59,7 +59,7 @@ export class PostsService {
     return await this.postsRepository.deleteAllData();
   }
 
-  async deletePost(id: string): Promise<boolean> {
+  async deletePost(id: string): Promise<any> {
     return await this.postsRepository.deletePost(id);
   }
 }

@@ -63,6 +63,11 @@ export class TestManager {
     return JSON.parse(this.post_1.text);
   }
 
+  async deletePost(postId: string) {
+    this.post_1 = await request(this.app.getHttpServer()).delete(`/posts/${postId}`);
+    return JSON.parse(this.post_1.text);
+  }
+
   async craetePostByBlogId(blogId: string) {
     // correctPostDataCREATEPOSTINBLOGS.blogId = this.blog_1_id;
     this.post_1 = await request(this.app.getHttpServer())

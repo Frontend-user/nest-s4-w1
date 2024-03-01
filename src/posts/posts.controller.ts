@@ -20,6 +20,7 @@ export class PostsController {
 
   @Get()
   async getPosts(
+    @Res() res,
     @Query('sortBy') sortBy?: string,
     @Query('sortDirection') sortDirection?: string,
     @Query('pageNumber') pageNumber?: number,
@@ -29,12 +30,13 @@ export class PostsController {
       pageNumber,
       pageSize,
     );
-    const { totalCount, posts } = await this.postsQueryRepository.getPosts(
-      sortBy,
-      sortDirection,
-      skip,
-      limit,
-    );
+    const result = await this.postsQueryRepository.getPosts(sortBy, sortDirection, skip, limit);
+
+    if (!result) {
+      res.sendStatus(404);
+      return;
+    }
+    const { totalCount, posts } = result;
     const changeBlogs = posts.map((b: PostDocumentType) => PostsMongoDataMapper.toView(b));
     const pagesCount = Math.ceil(totalCount / newPageSize);
 
@@ -45,8 +47,7 @@ export class PostsController {
       totalCount: totalCount,
       items: changeBlogs,
     };
-
-    return response;
+    return res.send(response);
   }
 
   @Get('/:id')
@@ -56,10 +57,15 @@ export class PostsController {
       if (post) {
         const changePost: PostViewModel = PostsMongoDataMapper.toView(post);
         res.send(changePost);
+        return;
       }
+      res.sendStatus(404);
+      return;
     } catch (e) {
       console.log(e);
       res.sendStatus(HTTP_STATUSES.NOT_FOUND_404);
+
+      return;
     }
   }
 
@@ -99,12 +105,10 @@ export class PostsController {
   @Delete('/:id')
   async deletePost(@Res() res, @Param('id') id: string) {
     try {
-      // const response: boolean = await this.postsService.deletePost(id);
-      let s: any = this.postsQueryRepository.getPostById(id);
-      res.send(s);
-      // res.sendStatus(response ? HTTP_STATUSES.NO_CONTENT_204 : HTTP_STATUSES.NOT_FOUND_404);
+      const response: any = await this.postsService.deletePost(id);
+      res.send(response ? HTTP_STATUSES.NO_CONTENT_204 : HTTP_STATUSES.NOT_FOUND_404);
     } catch (error) {
-      res.send(error);
+      res.sendStatus(HTTP_STATUSES.NOT_FOUND_404);
     }
   }
 }

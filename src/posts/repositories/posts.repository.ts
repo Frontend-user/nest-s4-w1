@@ -28,8 +28,8 @@ export class PostsRepository {
     return updatePost.matchedCount === 1;
   }
 
-  async deletePost(id: string): Promise<boolean> {
+  async deletePost(id: string): Promise<any> {
     const response = await this.postModel.deleteOne({ _id: new Types.ObjectId(id) });
-    return !!response.deletedCount;
+    return response.deletedCount === 1 ? true : false;
   }
 }

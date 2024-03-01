@@ -50,6 +50,12 @@ describe('Blogs', () => {
     expect(post_1).toEqual('s');
   });
 
+  it(`Delete POST`, async () => {
+    const result = await testManager.deletePost(post_1.id);
+    console.log(result, 'post create by blogid');
+    expect(result).toEqual('s');
+  });
+
   it(`Get POSTs BY BLOG ID`, async () => {
     await testManager.getPostsByBlogId(blog_1.id);
     console.log(blog_1, 'blogid');
@@ -65,6 +71,7 @@ describe('Blogs', () => {
     let postUp = await testManager.updatePost('s', blog_1.id);
     expect(postUp).toEqual('s');
   });
+
   // it(`CREATE BLOG`, async () => {
   //   blog_1 = await testManager.createBlog('aaaa');
   //   console.log(blog_1, 'createBlog');
