@@ -57,8 +57,13 @@ describe('Blogs', () => {
 
   it(`create Post in posts`, async () => {
     const response: any = await testManager.createPostInPost(blog_1.id);
-    expect(response).toEqual('s')
+    expect(response).toEqual('s');
     console.log(response, 'response');
+  });
+
+  it(`create Post in posts`, async () => {
+    let postUp = await testManager.updatePost('s', blog_1.id);
+    expect(postUp).toEqual('s');
   });
   // it(`CREATE BLOG`, async () => {
   //   blog_1 = await testManager.createBlog('aaaa');

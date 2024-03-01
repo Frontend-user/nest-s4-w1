@@ -4,7 +4,7 @@ import { Post, PostDocumentType } from '../domain/posts-schema';
 import { PostsRepository } from '../repositories/posts.repository';
 import { PostsQueryRepository } from '../repositories/posts.query-repository';
 import { PostsMongoDataMapper } from '../domain/posts.mongo.dm';
-import { WithId } from "../../blogs/types/blogs.types";
+import { BlogInputCreateModel, WithId } from "../../blogs/types/blogs.types";
 
 @Injectable()
 export class PostsService {
@@ -37,18 +37,19 @@ export class PostsService {
     return await this.postsQueryRepository.getPostById(id);
   }
 
-  async getPostsByBlogId(id: string) {
-    const posts: PostDocumentType[] | null =
-      await this.postsQueryRepository.getPostsByBlogId(id);
-    if (!posts) {
-      return false;
-    }
-    let mappedPosts: PostViewModel[];
-    if (posts.length > 0) {
-      mappedPosts = posts.map((p) => PostsMongoDataMapper.toView(p));
-    }
+  // async getPostsByBlogId(id: string) {
+  //   const posts: PostDocumentType[] | null = await this.postsQueryRepository.getPostsByBlogId(id);
+  //   if (!posts) {
+  //     return false;
+  //   }
+  //   let mappedPosts: PostViewModel[];
+  //   if (posts.length > 0) {
+  //     mappedPosts = posts.map((p) => PostsMongoDataMapper.toView(p));
+  //   }
+  // }
+  async updatePost(id: string, post: PostInputCreateModel): Promise<boolean> {
+    return await this.postsRepository.updatePost(id, post);
   }
-
   async getPosts() {
     return await this.postsQueryRepository.getPosts();
   }

@@ -129,6 +129,16 @@ export class TestManager {
     await request(this.app.getHttpServer()).delete('/testing/all-data').expect(204);
   }
 
+  async updatePost(postId: string, blogId: string) {
+    const p = { ...correctPostDataCREATEPOSTINBLOGS };
+    p['blogId'] = blogId;
+    this.blog_1 = await request(this.app.getHttpServer())
+      .put(`/posts/${postId}`)
+      .send(p)
+      .expect(203);
+    // return this.blog_1.text;
+  }
+
   async createBlog(name: string = 'string') {
     this.blog_1 = await request(this.app.getHttpServer())
       .post('/blogs')

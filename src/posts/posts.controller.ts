@@ -1,8 +1,8 @@
-import { Body, Controller, Get, Param, Post, Res } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Put, Res } from '@nestjs/common';
 import { PostsService } from './application/posts.service';
 import { PostsRepository } from './repositories/posts.repository';
 import { PostsQueryRepository } from './repositories/posts.query-repository';
-import { BlogViewModel } from '../blogs/types/blogs.types';
+import { BlogInputCreateModel, BlogViewModel } from '../blogs/types/blogs.types';
 import { BlogDocumentType } from '../blogs/domain/blogs-schema';
 import { BlogsMongoDataMapper } from '../blogs/domain/blogs.mongo.dm';
 import { PostDocumentType } from './domain/posts-schema';
@@ -56,6 +56,21 @@ export class PostsController {
       } catch (error) {
         res.sendStatus(HTTP_STATUSES.SOMETHING_WRONG_400);
       }
+    }
+  }
+
+  @Put('/:id')
+  async updatePost(@Res() res, @Body() body: PostInputCreateModel, @Param('id') id: string) {
+    debugger;
+    try {
+      const response: boolean = await this.postsService.updatePost(id, body);
+      res.sendStatus(response ? HTTP_STATUSES.NO_CONTENT_204 : HTTP_STATUSES.NOT_FOUND_404);
+      return
+
+    } catch (e) {
+      console.log(e);
+      res.sendStatus(HTTP_STATUSES.NOT_FOUND_404);
+      return
     }
   }
 }

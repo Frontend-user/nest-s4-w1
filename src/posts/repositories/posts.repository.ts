@@ -1,7 +1,9 @@
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { Injectable } from '@nestjs/common';
 import { Post, PostDocumentType } from '../domain/posts-schema';
+import { BlogInputCreateModel } from '../../blogs/types/blogs.types';
+import { PostInputCreateModel } from '../types/post.types';
 
 @Injectable()
 export class PostsRepository {
@@ -19,5 +21,10 @@ export class PostsRepository {
       _id: getCreatedPost._id,
     });
     return postToReturn ? postToReturn : false;
+  }
+
+  async updatePost(id: string, postEntity: PostInputCreateModel): Promise<boolean> {
+    const updatePost = await this.postModel.updateOne({ _id: new Types.ObjectId(id) }, postEntity);
+    return updatePost.matchedCount === 1;
   }
 }
