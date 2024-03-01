@@ -7,6 +7,7 @@ import { BlogsQueryRepository } from '../blogs/repositories/blogs.query-reposito
 import { HTTP_STATUSES } from '../_common/constants';
 import { UsersMongoDataMapper } from './domain/users.mongo.dm';
 import { blogsPaginate } from '../_common/paginate';
+
 @Controller('/users')
 export class UsersController {
   constructor(
@@ -43,6 +44,16 @@ export class UsersController {
         limit,
       );
       console.log(users, ' users');
+      if (!users || !(users.length > 0)) {
+        const response = {
+          pagesCount: 1,
+          page: 1,
+          pageSize: 10,
+          totalCount: 0,
+          items: [],
+        };
+        res.send(response);
+      }
       let changeUsers;
       try {
         changeUsers = users.map((b: UserDocumentType) => UsersMongoDataMapper.toView(b));

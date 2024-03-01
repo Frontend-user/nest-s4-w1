@@ -2,6 +2,7 @@ import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { Injectable } from '@nestjs/common';
 import { User } from '../domain/users-schema';
+import { UsersMongoDataMapper } from '../domain/users.mongo.dm';
 
 @Injectable()
 export class UsersQueryRepository {
@@ -18,22 +19,22 @@ export class UsersQueryRepository {
     const sb = sortBy ?? 'accountData.createdAt';
     console.log(sb);
     const sd = sortDirection ?? 'desc';
-
-    const query = this.userModel.find();
-    const totalCount = this.userModel.find();
-    if (searchLoginTerm || searchEmailTerm) {
-      if (searchEmailTerm) {
-        const newRegexp = new RegExp(searchEmailTerm, 'i');
-        query.where(`accountData.email`).regex(newRegexp);
-        totalCount.where(`accountData.email`).regex(newRegexp);
-      }
-
-      if (searchLoginTerm) {
-        const newRegexp = new RegExp(searchLoginTerm, 'i');
-        query.where(`accountData.login`).regex(newRegexp);
-        totalCount.where(`accountData.login`).regex(newRegexp);
-      }
-    }
+    const findQuery = UsersMongoDataMapper.__getUsersFindings(searchLoginTerm, searchEmailTerm);
+    const query = this.userModel.find(findQuery);
+    const totalCount = this.userModel.find(findQuery);
+    // if (searchLoginTerm || searchEmailTerm) {
+    //   if (searchEmailTerm) {
+    //     const newRegexp = new RegExp(searchEmailTerm, 'i');
+    //     query.where(`accountData.email`).regex(newRegexp);
+    //     totalCount.where(`accountData.email`).regex(newRegexp);
+    //   }
+    //
+    //   if (searchLoginTerm) {
+    //     const newRegexp = new RegExp(searchLoginTerm, 'i');
+    //     query.where(`accountData.login`).regex(newRegexp);
+    //     totalCount.where(`accountData.login`).regex(newRegexp);
+    //   }
+    // }
     const sort = {};
     sort[sb] = sd;
 
