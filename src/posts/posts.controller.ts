@@ -53,17 +53,16 @@ export class PostsController {
   }
 
   @Get('/:id')
-  async getPostById(@Param() id: string, @Res() res): Promise<PostViewModel | false> {
+  async getPostById(@Param() id: string, @Res() res): Promise<PostViewModel | any> {
     try {
       const post: PostDocumentType | null = await this.postsQueryRepository.getPostById(id);
       if (post) {
         const changePost: PostViewModel = PostsMongoDataMapper.toView(post);
-        return changePost;
+        res.send(changePost);
       }
     } catch (e) {
       console.log(e);
       res.sendStatus(HTTP_STATUSES.NOT_FOUND_404);
-      return;
     }
   }
 
