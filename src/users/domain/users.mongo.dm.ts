@@ -10,6 +10,20 @@ export class UsersMongoDataMapper {
       createdAt: user.accountData.createdAt,
     };
   }
+
+  static __getUserSortingOR(searchLoginTerm?: string, searchEmailTerm?: string) {
+    let findQuery: any = {};
+    if (searchLoginTerm || searchEmailTerm) {
+      findQuery = {
+        $or: [
+          { 'accountData.login': { $regex: String(searchLoginTerm), $options: 'i' } },
+          { 'accountData.email': { $regex: String(searchEmailTerm), $options: 'i' } },
+        ],
+      };
+    }
+    return findQuery;
+  }
+
   static __getUsersFindings(searchLoginTerm?: string, searchEmailTerm?: string) {
     let findQuery: any = {};
     if (searchLoginTerm || searchEmailTerm) {
@@ -22,6 +36,7 @@ export class UsersMongoDataMapper {
     }
     return findQuery;
   }
+
   static __getUserSorting(sortBy?: string, sortDirection?: any | string) {
     const sortQuery: any = { 'accountData.createdAt': -1 };
     if (sortBy) {
