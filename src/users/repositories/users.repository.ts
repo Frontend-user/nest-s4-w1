@@ -9,7 +9,9 @@ export class UsersRepository {
 
   async createUser(user: User): Promise<UserDocumentType | false> {
     const response = await new this.userModel(user);
-    return response ? response : false;
+    const getCreatedUser = await response.save();
+
+    return response ? getCreatedUser : false;
   }
 
   async deleteUser(id: string) {

@@ -25,21 +25,21 @@ export class BlogsQueryRepository {
     limit: number = 10,
   ): Promise<any> {
     console.log(sortBy);
-    let sb = sortBy ?? 'createdAt';
+    const sb = sortBy ?? 'createdAt';
     console.log(sb);
-    let sd = sortDirection ?? 'desc';
+    const sd = sortDirection ?? 'desc';
 
-    let query = this.blogModel.find();
-    let totalCount = this.blogModel.find();
+    const query = this.blogModel.find();
+    const totalCount = this.blogModel.find();
     if (searchNameTerm) {
       const newRegexp = new RegExp(searchNameTerm, 'i');
       query.where('name').regex(newRegexp);
       totalCount.where('name').regex(newRegexp);
     }
-    let sort = {};
+    const sort = {};
     sort[sb] = sd;
 
-    let blogs = await query.sort(sort).skip(skip).limit(limit).lean();
+    const blogs = await query.sort(sort).skip(skip).limit(limit).lean();
     if (blogs.length > 0) {
       const allBlogs = await totalCount.countDocuments();
 
