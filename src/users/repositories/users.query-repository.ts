@@ -16,7 +16,12 @@ export class UsersQueryRepository {
     skip: number = 0,
     limit: number = 10,
   ): Promise<any> {
-    const sb = `accountData.${sortBy}` ?? 'accountData.createdAt';
+    let sb;
+    if (sortBy) {
+      sb = `accountData.${sortBy}`;
+    } else {
+      sb = 'accountData.createdAt';
+    }
     console.log(sb);
     const sd = sortDirection ?? 'desc';
     let findQuery;
