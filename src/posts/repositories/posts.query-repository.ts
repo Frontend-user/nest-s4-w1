@@ -12,8 +12,31 @@ export class PostsQueryRepository {
     return await this.postModel.findOne({ _id: new Types.ObjectId(id) });
   }
 
-  async getPosts(): Promise<PostDocumentType[] | null> {
-    return await this.postModel.find().exec();
+  async getPosts(
+    sortBy?: string,
+    sortDirection?: string,
+    skip: number = 0,
+    limit: number = 10,
+  ): Promise<any> {
+    console.log(sortBy);
+    const sb = sortBy ?? 'createdAt';
+    console.log(sb);
+    const sd = sortDirection ?? 'desc';
+
+    const query = this.postModel.find();
+    const totalCount = this.postModel.find();
+    const sort = {};
+    sort[sb] = sd;
+
+    const posts = await query.sort(sort).skip(skip).limit(limit).lean();
+    if (posts.length > 0) {
+      const allPosts = await totalCount.countDocuments();
+
+      return { totalCount: allPosts, posts: posts };
+    } else return [];
+    // }
+    // let s = await this.blogModel.find({});
+    // return s;
   }
 
   async getPostsByBlogId(
@@ -24,26 +47,26 @@ export class PostsQueryRepository {
     skip: number = 0,
     limit: number = 10,
   ): Promise<any> {
-    let checkposts = await this.postModel.find({ blogId: id }).lean();
-    if (checkposts.length <1) {
+    const checkposts = await this.postModel.find({ blogId: id }).lean();
+    if (checkposts.length < 1) {
       return false;
     }
     console.log(sortBy);
-    let sb = sortBy ?? 'createdAt';
+    const sb = sortBy ?? 'createdAt';
     console.log(sb);
-    let sd = sortDirection ?? 'desc';
+    const sd = sortDirection ?? 'desc';
 
-    let query = this.postModel.find({ blogId: id });
-    let totalCount = this.postModel.find({ blogId: id });
+    const query = this.postModel.find({ blogId: id });
+    const totalCount = this.postModel.find({ blogId: id });
     if (searchNameTerm) {
       const newRegexp = new RegExp(searchNameTerm, 'i');
       query.where('name').regex(newRegexp);
       totalCount.where('name').regex(newRegexp);
     }
-    let sort = {};
+    const sort = {};
     sort[sb] = sd;
 
-    let posts = await query.sort(sort).skip(skip).limit(limit).lean();
+    const posts = await query.sort(sort).skip(skip).limit(limit).lean();
     if (posts.length > 0) {
       const allPosts = await totalCount.countDocuments();
 

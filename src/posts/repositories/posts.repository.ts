@@ -27,4 +27,9 @@ export class PostsRepository {
     const updatePost = await this.postModel.updateOne({ _id: new Types.ObjectId(id) }, postEntity);
     return updatePost.matchedCount === 1;
   }
+
+  async deletePost(id: string): Promise<boolean> {
+    const response = await this.postModel.deleteOne({ _id: new Types.ObjectId(id) });
+    return !!response.deletedCount;
+  }
 }

@@ -57,4 +57,9 @@ export class PostsService {
   async deleteAllData() {
     return await this.postsRepository.deleteAllData();
   }
+
+  async deleteBlog(id: string): Promise<boolean> {
+    return await this.postsRepository.deletePost(id);
+  }
+
 }

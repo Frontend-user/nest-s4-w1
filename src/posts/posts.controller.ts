@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, Put, Res } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put, Query, Res } from '@nestjs/common';
 import { PostsService } from './application/posts.service';
 import { PostsRepository } from './repositories/posts.repository';
 import { PostsQueryRepository } from './repositories/posts.query-repository';
@@ -10,6 +10,7 @@ import { PostInputCreateModel, PostViewModel } from './types/post.types';
 import { PostsMongoDataMapper } from './domain/posts.mongo.dm';
 import { BlogsQueryRepository } from '../blogs/repositories/blogs.query-repository';
 import { HTTP_STATUSES } from '../_common/constants';
+import { blogsPaginate } from '../_common/paginate';
 
 @Controller('/posts')
 export class PostsController {
@@ -21,23 +22,49 @@ export class PostsController {
   ) {}
 
   @Get()
-  async getPosts(): Promise<PostViewModel[] | false> {
-    const posts: PostDocumentType[] | null = await this.postsQueryRepository.getPosts();
-    if (posts) {
-      const changePosts: PostViewModel[] = posts.map((p) => PostsMongoDataMapper.toView(p));
-      return changePosts;
-    }
-    return false;
+  async getPosts(
+    @Query('sortBy') sortBy?: string,
+    @Query('sortDirection') sortDirection?: string,
+    @Query('pageNumber') pageNumber?: number,
+    @Query('pageSize') pageSize?: number,
+  ) {
+    const { skip, limit, newPageNumber, newPageSize } = blogsPaginate.getPagination(
+      pageNumber,
+      pageSize,
+    );
+    const { totalCount, posts } = await this.postsQueryRepository.getPosts(
+      sortBy,
+      sortDirection,
+      skip,
+      limit,
+    );
+    const changeBlogs = posts.map((b: PostDocumentType) => PostsMongoDataMapper.toView(b));
+    const pagesCount = Math.ceil(totalCount / newPageSize);
+
+    const response = {
+      pagesCount: pagesCount,
+      page: +newPageNumber,
+      pageSize: +newPageSize,
+      totalCount: totalCount,
+      items: changeBlogs,
+    };
+
+    return response;
   }
 
   @Get('/:id')
-  async getPostById(@Param() id: string): Promise<PostViewModel | false> {
-    const post: PostDocumentType | null = await this.postsQueryRepository.getPostById(id);
-    if (post) {
-      const changePost: PostViewModel = PostsMongoDataMapper.toView(post);
-      return changePost;
+  async getPostById(@Param() id: string, @Res() res): Promise<PostViewModel | false> {
+    try {
+      const post: PostDocumentType | null = await this.postsQueryRepository.getPostById(id);
+      if (post) {
+        const changePost: PostViewModel = PostsMongoDataMapper.toView(post);
+        return changePost;
+      }
+    } catch (e) {
+      console.log(e);
+      res.sendStatus(HTTP_STATUSES.NOT_FOUND_404);
+      return;
     }
-    return false;
   }
 
   @Post()
@@ -65,12 +92,21 @@ export class PostsController {
     try {
       const response: boolean = await this.postsService.updatePost(id, body);
       res.sendStatus(response ? HTTP_STATUSES.NO_CONTENT_204 : HTTP_STATUSES.NOT_FOUND_404);
-      return
-
+      return;
     } catch (e) {
       console.log(e);
       res.sendStatus(HTTP_STATUSES.NOT_FOUND_404);
-      return
+      return;
+    }
+  }
+
+  @Delete('/:id')
+  async deletePost(@Res() res, @Param('id') id: string) {
+    try {
+      const response: boolean = await this.postsService.deletePost(id);
+      res.sendStatus(response ? HTTP_STATUSES.NO_CONTENT_204 : HTTP_STATUSES.NOT_FOUND_404);
+    } catch (error) {
+      res.sendStatus(HTTP_STATUSES.NOT_FOUND_404);
     }
   }
 }
