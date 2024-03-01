@@ -14,7 +14,7 @@ export class UsersMongoDataMapper {
     let findQuery: any = {};
     if (searchLoginTerm || searchEmailTerm) {
       findQuery = {
-        $or: [
+        $and: [
           { 'accountData.login': { $regex: String(searchLoginTerm), $options: 'i' } },
           { 'accountData.email': { $regex: String(searchEmailTerm), $options: 'i' } },
         ],
