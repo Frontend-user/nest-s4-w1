@@ -47,12 +47,18 @@ describe('Blogs', () => {
   it(`CREATE POST BY BLOG ID`, async () => {
     post_1 = await testManager.craetePostByBlogId(blog_1.id);
     console.log(post_1, 'post create by blogid');
-    expect(post_1).toEqual('s')
+    expect(post_1).toEqual('s');
   });
 
   it(`Get POSTs BY BLOG ID`, async () => {
     await testManager.getPostsByBlogId(blog_1.id);
     console.log(blog_1, 'blogid');
+  });
+
+  it(`create Post in posts`, async () => {
+    const response: any = await testManager.createPostInPost(blog_1.id);
+    expect(response).toEqual('s')
+    console.log(response, 'response');
   });
   // it(`CREATE BLOG`, async () => {
   //   blog_1 = await testManager.createBlog('aaaa');
@@ -83,7 +89,6 @@ describe('Blogs', () => {
   //   console.log(getBlog, 'getBLog');
   // });
   //
-
 
   // it(`GET POST`, async () => {
   //   const getPost: any = await testManager.getPost(post_1.id);

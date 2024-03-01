@@ -37,7 +37,7 @@ export class TestManager {
   }
 
   async getPostsByBlogId(blogId: string) {
-    console.log(blogId,'blogid');
+    console.log(blogId, 'blogid');
     const response = await request(this.app.getHttpServer()).get(`/blogs/${blogId}/posts`);
     expect(response.text).toEqual('fsdfdssdf');
     expect(JSON.parse(response.text)).toEqual('fsdfdssdf');
@@ -54,6 +54,13 @@ export class TestManager {
       `/blogs?searchNameTerm=${searchNameTerm}&sortBy=${sortBy}&sortDirection=${sortDirection}&pageNumber=${pageNumber}&pageSize=${pageSize}`,
     );
     return JSON.parse(response.text);
+  }
+
+  async createPostInPost(blogId: string) {
+    const s = { ...correctPostDataCREATEPOSTINBLOGS };
+    s['blogId'] = blogId;
+    this.post_1 = await request(this.app.getHttpServer()).post(`/posts`).send(s);
+    return JSON.parse(this.post_1.text);
   }
 
   async craetePostByBlogId(blogId: string) {
@@ -127,6 +134,6 @@ export class TestManager {
       .post('/blogs')
       .send({ ...correctBlogData, name });
 
-    return JSON.parse(this.blog_1.text)
+    return JSON.parse(this.blog_1.text);
   }
 }
